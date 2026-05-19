@@ -1,22 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-const { mockShardCGet, mockShardCSet, mockShardCDel, mockShardCKeys, mockSupabaseSelect } = vi.hoisted(() => {
-  const mockSupabaseSelect = vi.fn();
-  const mockFrom = vi.fn(() => ({
-    select: vi.fn(() => ({
-      eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
-    }))
-  }));
-  return {
-    mockShardCGet: vi.fn(),
-    mockShardCSet: vi.fn(),
-    mockShardCDel: vi.fn(),
-    mockShardCKeys: vi.fn(),
-    mockSupabaseSelect: mockFrom,
-  };
-});
+const { mockShardCGet, mockShardCSet, mockShardCDel, mockShardCKeys } = vi.hoisted(() => ({
+  mockShardCGet: vi.fn(),
+  mockShardCSet: vi.fn(),
+  mockShardCDel: vi.fn(),
+  mockShardCKeys: vi.fn(),
+}));
 
-vi.mock('../../../src/lib/redis', () => ({
+const mockFrom = vi.hoisted(() => vi.fn());
+
+vi.mock('../../lib/redis', () => ({
   shardC: {
     get: mockShardCGet,
     set: mockShardCSet,
@@ -27,7 +20,7 @@ vi.mock('../../../src/lib/redis', () => ({
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({
-    from: mockSupabaseSelect,
+    from: mockFrom,
   }))
 }));
 
@@ -55,14 +48,14 @@ describe('router', () => {
   it('selectModel falls back to Supabase when cache miss', async () => {
     mockShardCGet.mockResolvedValue(null);
     mockShardCSet.mockResolvedValue('OK');
-    mockSupabaseSelect.mockReturnValue({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(() => Promise.resolve({ data: [healthyModel], error: null }))
-          }))
-        }))
-      }))
+    mockFrom.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ data: [healthyModel], error: null })
+          })
+        })
+      })
     });
     const result = await selectModel('specification', 'software');
     expect(result.selected.provider).toBeDefined();
