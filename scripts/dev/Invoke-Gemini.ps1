@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([Parameter(Mandatory)][string]$Prompt, [string]$Model = "gemini-1.5-flash")
+param([Parameter(Mandatory)][string]$Prompt, [string]$Model = "gemini-2.0-flash")
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ApiKey = $env:GEMINI_API_KEY

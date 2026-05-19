@@ -8,3 +8,4 @@ dist/
 coverage/
 
 supabase/.temp/
+gemini-debug.txt
