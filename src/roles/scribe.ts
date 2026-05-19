@@ -1,0 +1,86 @@
+import { readAnchor, writeContribution } from '../lib/anchor';
+import { AnchorContribution } from '../schemas/anchor';
+import { ArtifactOutput } from '../schemas/artifact';
+import { LibrarianError } from '../lib/librarian-write';
+
+export interface ScribeResult {
+  artifact: ArtifactOutput;
+  anchor_contribution: AnchorContribution;
+}
+
+export async function scribe(
+  sessionId: string,
+  brainId: string,
+  addressKey: string
+): Promise<ScribeResult> {
+  try {
+    const anchor = await readAnchor(sessionId);
+
+    const architectContribution = anchor.contributions.find(
+      (c) => c.role === 'architect'
+    );
+    if (!architectContribution) {
+      throw new LibrarianError('Architect contribution missing', 'VALIDATION_FAILED');
+    }
+
+    const scorerContribution = anchor.contributions.find(
+      (c) => c.role === 'scorer'
+    );
+    if (!scorerContribution) {
+      throw new LibrarianError('Scorer contribution missing', 'VALIDATION_FAILED');
+    }
+
+    const devilContribution = anchor.contributions.find(
+      (c) => c.role === 'devil'
+    );
+    const validatorContribution = anchor.contributions.find(
+      (c) => c.role === 'validator'
+    );
+
+    const artifact: ArtifactOutput = {
+      session_id: sessionId,
+      brain_id: brainId,
+      status: 'complete',
+      address_key: addressKey,
+      content: (architectContribution.payload as Record<string, unknown>).structured_artifact as unknown,
+      confidence_score: (scorerContribution.payload as Record<string, unknown>).confidence_score as number,
+      gate_decision: (scorerContribution.payload as Record<string, unknown>).gate_decision as 'pass' | 'fail' | 'pass_with_warning',
+      provenance: {
+        address_key: addressKey,
+        data_points_accessed: [],
+        chunked: false,
+        domain_uncertainty: false
+      },
+      anchor_trace: anchor.contributions.map((c) => ({
+        role: c.role,
+        status: c.status,
+        written_at: c.written_at,
+        summary: ''
+      })),
+      created_at: new Date().toISOString()
+    };
+
+    const scribeContribution: AnchorContribution = {
+      role: 'scribe',
+      status: 'complete',
+      written_at: new Date().toISOString(),
+      payload: {
+        artifact_assembled: true,
+        session_id: sessionId
+      },
+
+    };
+
+    await writeContribution(sessionId, scribeContribution);
+
+    return {
+      artifact,
+      anchor_contribution: scribeContribution
+    };
+  } catch (error) {
+    if (error instanceof LibrarianError) {
+      throw error;
+    }
+    throw new LibrarianError('Failed to assemble artifact', 'SCRIBE_FAILED');
+  }
+}
