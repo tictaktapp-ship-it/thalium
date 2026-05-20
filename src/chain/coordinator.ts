@@ -93,13 +93,13 @@ export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Pro
 
         break;
       } catch (error) {
-        emitter.emit('chain.partial', { error, sessionId, brainId });
+        emitter.emit('chain.partial', { errorMessage: error instanceof Error ? error.message : String(error), error, sessionId, brainId });
         partialArtifact = { error, sessionId, brainId };
         break;
       }
     }
   } catch (error) {
-    emitter.emit('chain.partial', { error, sessionId, brainId });
+    emitter.emit('chain.partial', { errorMessage: error instanceof Error ? error.message : String(error), error, sessionId, brainId });
     partialArtifact = { error, sessionId, brainId };
   } finally {
     try {
@@ -113,7 +113,7 @@ export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Pro
         emitter.emit('chain.partial', partialArtifact);
       }
     } catch (error) {
-      emitter.emit('chain.partial', { error, sessionId, brainId });
+      emitter.emit('chain.partial', { errorMessage: error instanceof Error ? error.message : String(error), error, sessionId, brainId });
     }
   }
 }
