@@ -16,11 +16,11 @@ export async function runLibrarian(
   addressKey: string,
   domain: string
 ): Promise<LibrarianRunResult> {
-  const anchor = await readAnchor(sessionId);
+  const anchor = await readAnchor(sessionId).catch(() => null);
   let entries_written = 0;
   let entries_failed = 0;
 
-  for (const contribution of anchor.contributions) {
+  for (const contribution of (anchor?.contributions ?? [])) {
     if (contribution.status === 'complete' && contribution.payload) {
       try {
         await librarianWrite({
