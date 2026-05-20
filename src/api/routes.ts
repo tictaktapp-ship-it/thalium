@@ -1,0 +1,200 @@
+import { Router, Request, Response, NextFunction } from 'express';
+import { Pool } from 'pg';
+import { Redis } from '@upstash/redis';
+import { z } from 'zod';
+
+declare global {
+  namespace Express {
+    interface Request {
+      apiKey?: string;
+    }
+  }
+}
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const shardC = new Redis({ url: process.env.UPSTASH_REDIS_SHARD_C_URL!, token: process.env.UPSTASH_REDIS_SHARD_C_TOKEN! });
+
+const InvokeBodySchema = z.object({
+  session_id: z.string(),
+  entity_id: z.string(),
+  input: z.object({ type: z.string(), content: z.string() }),
+  output_schema: z.string().optional(),
+  role_config: z.object({}).passthrough().optional()
+});
+
+const MemoryWriteBodySchema = z.object({
+  address_key: z.string().regex(/^[a-z_]+\.[a-z_]+\.[a-z_]+\.[a-z_]+$/),
+  content: z.record(z.unknown()),
+  entry_level: z.string(),
+  source: z.string().optional()
+});
+
+const CreateBrainBodySchema = z.object({
+  name: z.string(),
+  domain: z.string(),
+  config: z.record(z.unknown()).optional()
+});
+
+export function requireInternalHeader(req: Request, res: Response, next: NextFunction): void {
+  const header = req.headers['x-thalium-internal'];
+  if (header !== process.env.THALIUM_INTERNAL_SECRET) {
+    res.status(401).json({ error: 'unauthorized', code: 'missing_internal_header' });
+    return;
+  }
+  next();
+}
+
+export function requireApiKey(req: Request, res: Response, next: NextFunction): void {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ error: 'unauthorized', code: 'missing_api_key' });
+    return;
+  }
+  req.apiKey = authHeader.slice(7);
+  next();
+}
+
+export function requireScope(scope: string): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.apiKey) {
+        res.status(401).json({ error: 'unauthorized', code: 'missing_api_key' });
+        return;
+      }
+
+      const { rows } = await pool.query(
+        `SELECT scopes FROM api_keys 
+         WHERE key_hash = encode(digest($1, 'sha256'), 'hex') 
+         AND revoked_at IS NULL 
+         AND (expires_at IS NULL OR expires_at > now())`,
+        [req.apiKey]
+      );
+
+      const row = rows[0];
+      if (!row || !row.scopes || !Array.isArray(row.scopes) || !row.scopes.includes(scope)) {
+        res.status(403).json({ error: 'forbidden', code: 'insufficient_scope', required_scope: scope });
+        return;
+      }
+
+      next();
+    } catch (err) {
+      res.status(500).json({ error: 'internal_error' });
+    }
+  };
+}
+
+export function createRouter(): Router {
+  const router = Router();
+  router.use(requireInternalHeader);
+  router.use(requireApiKey);
+
+  router.post('/v1/brain/:brainId/invoke', requireScope('invoke'), async (req, res) => {
+    try {
+      InvokeBodySchema.parse(req.body);
+      res.status(202).json({ status: 'accepted', message: 'chain dispatch not yet wired' });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ error: 'bad_request', code: 'invalid_input', detail: err.errors[0]?.message });
+        return;
+      }
+      res.status(500).json({ error: 'internal_error' });
+    }
+  });
+
+  router.post('/v1/brain/:brainId/invoke/stream', requireScope('invoke'), async (req, res) => {
+    try {
+      InvokeBodySchema.parse(req.body);
+      res.status(202).json({ status: 'accepted', message: 'stream not yet wired' });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ error: 'bad_request', code: 'invalid_input', detail: err.errors[0]?.message });
+        return;
+      }
+      res.status(500).json({ error: 'internal_error' });
+    }
+  });
+
+  router.get('/v1/brain/:brainId/memory', requireScope('memory:read'), (_req, res) => {
+    res.status(200).json({ results: [], total: 0 });
+  });
+
+  router.post('/v1/brain/:brainId/memory/write', requireScope('memory:write'), async (req, res) => {
+    try {
+      MemoryWriteBodySchema.parse(req.body);
+      res.status(202).json({ status: 'accepted' });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ error: 'bad_request', code: 'invalid_input', detail: err.errors[0]?.message });
+        return;
+      }
+      res.status(500).json({ error: 'internal_error' });
+    }
+  });
+
+  router.delete('/v1/brain/:brainId/memory', requireScope('memory:admin'), (_req, res) => {
+    res.status(202).json({ status: 'accepted' });
+  });
+
+  router.get('/v1/brain/:brainId/artifacts', requireScope('memory:read'), (_req, res) => {
+    res.status(200).json({ artifacts: [], total: 0 });
+  });
+
+  router.post('/v1/brain/:brainId/artifacts/:artifactId/approve', requireScope('memory:write'), (_req, res) => {
+    res.status(200).json({ status: 'approved' });
+  });
+
+  router.get('/v1/brain/:brainId/audit', requireScope('audit:read'), (_req, res) => {
+    res.status(200).json({ entries: [], total: 0 });
+  });
+
+  router.get('/v1/brain/:brainId/trace/:traceId', requireScope('audit:read'), (_req, res) => {
+    res.status(200).json({ trace: null });
+  });
+
+  router.post('/v1/brain', requireScope('admin'), async (req, res) => {
+    try {
+      CreateBrainBodySchema.parse(req.body);
+      res.status(202).json({ status: 'accepted' });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ error: 'bad_request', code: 'invalid_input', detail: err.errors[0]?.message });
+        return;
+      }
+      res.status(500).json({ error: 'internal_error' });
+    }
+  });
+
+  router.put('/v1/brain/:brainId/config', requireScope('config:write'), (_req, res) => {
+    res.status(200).json({ status: 'updated' });
+  });
+
+  router.get('/v1/brain/:brainId/usage', requireScope('invoke'), (_req, res) => {
+    res.status(200).json({ usage: {} });
+  });
+
+  router.get('/v1/models', requireScope('invoke'), (_req, res) => {
+    res.status(200).json({ models: [] });
+  });
+
+  router.get('/v1/brain/:brainId/status', requireScope('invoke'), async (req, res) => {
+    try {
+      const { brainId } = req.params;
+      const cacheKey = 'brain_status:' + brainId;
+      const cached = await shardC.get<string>(cacheKey);
+      const parsed = cached ? (typeof cached === 'string' ? JSON.parse(cached) : cached) : null;
+      if (parsed) {
+        res.status(200).json(parsed);
+        return;
+      }
+      const result = await pool.query('SELECT operational_state FROM brain_instances WHERE id = $1', [brainId]);
+      const state = result.rows[0]?.operational_state ?? 'active';
+      const response = { brain_id: brainId, operational_state: state, domain_uncertainty: false, active_chain_count: 0 };
+      await shardC.set(cacheKey, JSON.stringify(response), { ex: 10 });
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ error: 'internal_error' });
+    }
+  });
+
+  return router;
+}
