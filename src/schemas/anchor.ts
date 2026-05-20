@@ -56,7 +56,7 @@ export type AnchorContribution = z.infer<typeof AnchorContributionSchema>;
 export const AnchorStateSchema = z.object({
   session_id: z.string().uuid(),
   brain_id: z.string().uuid(),
-  address_key: AddressKeySchema,
+  address_key: z.string().min(1),
   created_at: z.string().datetime(),
   last_refreshed_at: z.string().datetime(),
   contributions: z.array(AnchorContributionSchema),

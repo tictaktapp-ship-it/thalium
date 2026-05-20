@@ -26,7 +26,7 @@ export interface SSEEmitter {
 export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Promise<void> {
   const { input, brainId, domain, sessionId } = chainInput;
   const startedAt = new Date();
-  let addressKey = 'pending.pending.pending.pending';
+  let addressKey = 'intent_clarification.org.general.general';
   let attemptCount = 0;
   let partialArtifact: unknown = null;
 
