@@ -16,7 +16,7 @@ export interface ValidatorResult {
   anchor_contribution: AnchorContribution;
 }
 
-export const MAX_RECLASSIFICATION_ATTEMPTS = 2;
+export const MAX_RECLASSIFICATION_ATTEMPTS = 1;
 export const DEFAULT_CONFIDENCE_THRESHOLD = 60;
 
 const ScorerPayloadSchema = z.object({

@@ -21,7 +21,7 @@ export interface ScorerResult {
   anchor_contribution: AnchorContribution;
 }
 
-export const DEFAULT_PASS_THRESHOLD = 60;
+export const DEFAULT_PASS_THRESHOLD = 50;
 
 const RuleWeightsSchema = z.object({
   architect_weight: z.number().min(0).max(1),
