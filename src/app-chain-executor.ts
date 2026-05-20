@@ -1,0 +1,40 @@
+// src/app-chain-executor.ts
+import express from 'express';
+import { handleChainInvocation } from './api/chain-executor';
+import { ZodError } from 'zod';
+
+const app = express();
+
+app.use(express.json());
+
+app.get('/health', (_, res) => {
+  res.json({ status: 'ok', app: 'chain-executor' });
+});
+
+app.post('/v1/invoke', async (req, res) => {
+  try {
+    await handleChainInvocation(req, res);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: 'Invalid request', details: error.errors });
+    } else {
+      console.error('Unhandled error in chain invocation:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error);
+  process.exit(1);
+});
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Chain Executor listening on port ${PORT}`);
+});
