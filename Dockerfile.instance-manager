@@ -1,0 +1,20 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json tsconfig.json ./
+RUN npm ci
+COPY src/ ./src/
+RUN npm run build
+
+FROM node:20-alpine AS runner
+RUN addgroup -S thalium && adduser -S thalium -G thalium
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
+RUN chown -R thalium:thalium /app
+USER thalium
+ENV NODE_ENV=production
+EXPOSE 8081
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget -qO- http://localhost:8081/health || exit 1
+CMD ["node", "dist/app-instance-manager.js"]
