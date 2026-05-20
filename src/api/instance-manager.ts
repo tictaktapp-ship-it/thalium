@@ -56,6 +56,8 @@ export async function createBrainInstance(config: BrainInstanceConfig): Promise<
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Supabase error:', response.status, errorText);
     throw new LibrarianError('Failed to create Brain Instance', 'WRITE_FAILED');
   }
 
