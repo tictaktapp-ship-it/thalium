@@ -21,26 +21,3 @@ hard_limit = 100
 [[vm]]
 size = 'shared-cpu-1x'
 memory = '512mb'
-app = 'thalium-instance-manager'
-primary_region = 'lhr'
-[build]
-dockerfile = 'Dockerfile.instance-manager'
-[env]
-NODE_ENV = 'production'
-PORT = '8081'
-[[services]]
-internal_port = 8081
-protocol = 'tcp'
-[[services.ports]]
-port = 443
-handlers = ['tls', 'http']
-[[services.ports]]
-port = 80
-handlers = ['http']
-[services.concurrency]
-type = 'requests'
-soft_limit = 50
-hard_limit = 100
-[[vm]]
-size = 'shared-cpu-1x'
-memory = '512mb'
