@@ -69,7 +69,7 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-const PORT = process.env.PORT || 8081;
+const PORT = parseInt(process.env.PORT ?? '8081', 10);
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Instance Manager listening on port ${PORT}`);
 });
