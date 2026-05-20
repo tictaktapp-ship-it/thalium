@@ -49,7 +49,8 @@ export async function createBrainInstance(config: BrainInstanceConfig): Promise<
     headers: {
       'Content-Type': 'application/json',
       'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`
+      'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
+      'Prefer': 'return=representation'
     },
     body: JSON.stringify(brainInstance)
   });
