@@ -52,7 +52,9 @@ export async function runLibrarian(
     }
   };
 
-  await writeContribution(sessionId, librarianContribution);
+  if (anchor !== null) {
+    await writeContribution(sessionId, librarianContribution);
+  }
 
   let anchor_evicted = false;
   try {
