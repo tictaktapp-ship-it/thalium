@@ -17,7 +17,7 @@ export interface ValidatorResult {
 }
 
 export const MAX_RECLASSIFICATION_ATTEMPTS = 1;
-export const DEFAULT_CONFIDENCE_THRESHOLD = 60;
+export const DEFAULT_CONFIDENCE_THRESHOLD = 50;
 
 const ScorerPayloadSchema = z.object({
   confidence_score: z.number().min(0).max(100),

@@ -1,7 +1,6 @@
 import { writeContribution } from '../lib/anchor';
 import { AnchorContribution } from '../schemas/anchor';
 import { LibrarianError } from '../lib/librarian-write';
-import { createClient } from '@supabase/supabase-js';
 
 export interface BoundaryCheckResult {
   passed: boolean;
@@ -32,21 +31,15 @@ export async function enforceeBoundaries(
     throw new LibrarianError('Supabase credentials are missing', 'CONFIGURATION_ERROR');
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey, { global: { fetch: fetch.bind(globalThis) }, realtime: { timeout: 0 } as never });
+  const supabase = null; // Supabase client not used - using fetch directly
 
   let rules: { blocked_terms?: string[] } = {};
   try {
-    const { data, error } = await supabase
-      .from('institutional_ring')
-      .select('*')
-      .eq('address_key', `boundary_rules.${domain}`)
-      .eq('brain_id', brainId)
-      .single();
-
-    if (error) {
-      console.warn(`Failed to fetch boundary rules: ${error.message}`);
-    } else {
-      rules = data;
+    const rulesUrl = `${supabaseUrl}/rest/v1/institutional_ring?address_key=eq.boundary_rules.${domain}&brain_id=eq.${brainId}&select=content&limit=1`;
+    const rulesRes = await fetch(rulesUrl, { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } });
+    if (rulesRes.ok) {
+      const rulesData = await rulesRes.json() as { content?: { blocked_terms?: string[] } }[];
+      if (rulesData.length > 0 && rulesData[0]?.content) { rules = rulesData[0].content; }
     }
   } catch (err) {
     console.warn(`Error fetching boundary rules: ${err}`);
