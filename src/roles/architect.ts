@@ -80,6 +80,9 @@ export async function architect(
     const cleanedStr = contentStr!.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     const parsedOutput = architectOutputSchema.safeParse(JSON.parse(cleanedStr));
     if (!parsedOutput.success) {
+      console.error('[architect] RAW OUTPUT:', contentStr);
+      console.error('[architect] CLEANED:', cleanedStr);
+      console.error('[architect] ZOD ERRORS:', JSON.stringify(parsedOutput.error.issues));
       throw new LibrarianError('Invalid output structure from model', 'VALIDATION_FAILED');
     }
 
