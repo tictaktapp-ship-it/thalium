@@ -4,7 +4,7 @@ import { LibrarianError } from '../lib/librarian-write';
 import { z } from 'zod';
 
 export interface ArchitectOutput {
-  structured_artifact: string;
+  structured_artifact: unknown | null;
   sections: string[];
   confidence: number;
   reasoning: string;
@@ -16,7 +16,7 @@ export interface ArchitectResult {
 }
 
 const architectOutputSchema = z.object({
-  structured_artifact: z.string().min(1),
+  structured_artifact: z.unknown().default(null),
   sections: z.array(z.string().min(1)),
   confidence: z.number().min(0).max(1),
   reasoning: z.string().min(1),
@@ -78,7 +78,8 @@ export async function architect(
     }
 
     const cleanedStr = contentStr!.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    const parsedOutput = architectOutputSchema.safeParse(JSON.parse(cleanedStr));
+    const parsed = JSON.parse(cleanedStr);
+    const parsedOutput = architectOutputSchema.safeParse(parsed);
     if (!parsedOutput.success) {
       console.error('[architect] RAW OUTPUT:', contentStr);
       console.error('[architect] CLEANED:', cleanedStr);
@@ -96,7 +97,7 @@ export async function architect(
     await writeContribution(sessionId, contribution);
 
     return {
-      output: parsedOutput.data,
+      output: parsedOutput.data as ArchitectOutput,
       anchor_contribution: contribution,
     };
   } catch (error) {

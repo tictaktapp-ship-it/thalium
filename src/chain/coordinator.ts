@@ -54,7 +54,7 @@ export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Pro
         const architectResult = await architect(sessionId, input, addressKey, triageResult.intent_type, domain);
         emitter.emit('full.architect', architectResult);
 
-        const devilResult = await devil(sessionId, input, architectResult.output.structured_artifact, triageResult.intent_type, domain);
+        const devilResult = await devil(sessionId, input, String(architectResult.output.structured_artifact), triageResult.intent_type, domain);
         emitter.emit('full.devil', devilResult);
 
         const scorerResult = await score(sessionId, brainId, addressKey);
@@ -73,7 +73,7 @@ export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Pro
           break;
         }
 
-        const boundaryResult = await enforceeBoundaries(sessionId, architectResult.output.structured_artifact, domain, brainId);
+        const boundaryResult = await enforceeBoundaries(sessionId, String(architectResult.output.structured_artifact), domain, brainId);
         emitter.emit('full.boundary_keeper', boundaryResult);
         if (boundaryResult.output.action === 'block') {
           emitter.emit('chain.partial', boundaryResult);
