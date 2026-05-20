@@ -64,6 +64,8 @@ export async function audit(
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Audit log error:', response.status, errorText);
       throw new LibrarianError('Failed to write audit log', 'WRITE_FAILED');
     }
 
