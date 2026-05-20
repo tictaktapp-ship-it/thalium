@@ -9,7 +9,7 @@ export interface InterrogatorResult {
   anchor_contribution: AnchorContribution;
 }
 
-export const INTERROGATOR_THRESHOLD = 0.6;
+export const INTERROGATOR_THRESHOLD = 0.7;
 export const DEFAULT_PAUSE_TIMEOUT_MINUTES = 10;
 
 export async function interrogate(

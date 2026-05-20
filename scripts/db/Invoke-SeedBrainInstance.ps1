@@ -115,9 +115,9 @@ Get-Content $EnvFile | ForEach-Object {
 }
 
 # Verify required env vars are present
-$RequiredVars = @('SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'UPSTASH_REDIS_URL_C', 'UPSTASH_REDIS_TOKEN_C')
+$RequiredVars = @('SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'REDIS_SHARD_C_URL', 'REDIS_SHARD_C_TOKEN')
 $Missing = $RequiredVars | Where-Object { [string]::IsNullOrWhiteSpace([System.Environment]::GetEnvironmentVariable($_)) }
-if ($Missing.Count -gt 0) {
+if (@($Missing).Count -gt 0) {
     Write-Error "Missing required environment variables: $($Missing -join ', ')"
     exit 1
 }

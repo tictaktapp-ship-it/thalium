@@ -21,7 +21,7 @@
 
 import { librarianWrite } from '../lib/librarian-write.js';
 import { shardC } from '../lib/redis.js';
-import { v4 as uuidv4 } from 'uuid';
+
 
 // ---------------------------------------------------------------------------
 // Types
@@ -346,9 +346,10 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
     const addressKey = `${region}.${domain}.general`;
     const templates = TEMPLATES[region];
 
-    for (let i = 0; i < templates.length; i++) {
-      const template = templates[i];
-      const entryId = uuidv4();
+    let templateIndex = 0;
+    for (const template of templates) {
+      const entryId = crypto.randomUUID();
+      const displayIndex = templateIndex + 1;
 
       try {
         await librarianWrite({
@@ -373,7 +374,7 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
         addressKeysPopulated.add(addressKey);
 
         console.log(
-          `[seeder]   ✓ ${addressKey} [${i + 1}/${templates.length}] entry=${entryId.slice(0, 8)}`,
+          `[seeder]   ✓ ${addressKey} [${displayIndex}/${templates.length}] entry=${entryId.slice(0, 8)}`,
         );
 
         // Update Coverage Map in Redis Shard C after each successful write
@@ -382,8 +383,8 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        errors.push({ addressKey, entryIndex: i, message });
-        console.error(`[seeder]   ✗ ${addressKey} [${i + 1}/${templates.length}]: ${message}`);
+        errors.push({ addressKey, entryIndex: templateIndex, message });
+        console.error(`[seeder]   ✗ ${addressKey} [${displayIndex}/${templates.length}]: ${message}`);
       }
     }
   }

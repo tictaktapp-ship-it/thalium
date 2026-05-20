@@ -62,6 +62,20 @@ export function buildClassificationPrompt(input: string, domain: string): string
 - urgency: 'acute' only for diagnosis inputs with production impact language
 - prior_baseline_detected: true only for change_request inputs
 
+CRITICAL CLASSIFICATION RULES:
+1. specification vs planning: 'Build X', 'Create X', 'Design X' with no prior baseline = specification. planning is only when the requester's own team self-executes with no external handoff.
+2. change_request requires a prior baseline. 'Build X from scratch' = specification. 'Add X to existing Y' = change_request.
+3. scope: project = specific bounded engagement. org = organisation-wide. entity = specific named system or component. global = external knowledge ingestion only.
+4. diagnosis requires an active problem: broken, failing, error, down. No active problem = not diagnosis.
+5. verification requires evidence: PR links, test results, done, complete, ready to ship.
+
+EXAMPLES:
+- 'Build a SaaS marketplace' -> specification, project
+- 'Add feature to existing app' -> change_request, project
+- 'Payments service throwing 503 errors' -> diagnosis, entity
+- 'Q3 tech debt review' -> retrospective, org
+- 'What did we decide about rate limits?' -> knowledge_retrieval, entity
+
 Input: ${input}
 
 Return ONLY the JSON object with no markdown, no explanation, no other formatting.`;
