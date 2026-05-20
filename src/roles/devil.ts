@@ -92,7 +92,8 @@ export async function devil(
 
     let devilOutput: DevilOutput;
     try {
-      devilOutput = JSON.parse(content);
+      const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      devilOutput = JSON.parse(cleanedContent);
     } catch (e) {
       throw new LibrarianError('Failed to parse API response JSON', 'VALIDATION_FAILED');
     }

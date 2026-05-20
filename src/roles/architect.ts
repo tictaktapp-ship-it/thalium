@@ -77,7 +77,8 @@ export async function architect(
       throw new LibrarianError('No content in OpenRouter response', 'VALIDATION_FAILED');
     }
 
-    const parsedOutput = architectOutputSchema.safeParse(JSON.parse(contentStr!));
+    const cleanedStr = contentStr!.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const parsedOutput = architectOutputSchema.safeParse(JSON.parse(cleanedStr));
     if (!parsedOutput.success) {
       throw new LibrarianError('Invalid output structure from model', 'VALIDATION_FAILED');
     }
