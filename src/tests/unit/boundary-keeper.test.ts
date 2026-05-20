@@ -11,6 +11,18 @@ vi.mock('../../lib/anchor', () => ({
 
 vi.stubGlobal('fetch', mockFetch);
 
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          eq: vi.fn(() => ({ single: vi.fn(() => Promise.resolve({ data: [], error: null })) }))
+        }))
+      }))
+    }))
+  }))
+}));
+
 import { enforceeBoundaries } from '../../roles/boundary-keeper';
 import { LibrarianError } from '../../lib/librarian-write';
 
