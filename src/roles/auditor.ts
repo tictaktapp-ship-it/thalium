@@ -60,7 +60,19 @@ export async function audit(
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`
       },
-      body: JSON.stringify(auditEntry)
+      body: JSON.stringify({
+        session_id: auditEntry.session_id,
+        brain_id: auditEntry.brain_id,
+        event_type: auditEntry.event_type,
+        payload: {
+          address_key: auditEntry.address_key,
+          roles_activated: auditEntry.roles_activated,
+          gate_decision: auditEntry.gate_decision,
+          confidence_score: auditEntry.confidence_score,
+          duration_ms: auditEntry.duration_ms,
+          ...auditEntry.payload
+        }
+      })
     });
 
     if (!response.ok) {
