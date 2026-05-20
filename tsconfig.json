@@ -1,1 +1,29 @@
-{"compilerOptions":{"target":"ES2022","module":"ESNext","moduleResolution":"bundler","lib":["ES2022"],"outDir":"./dist","rootDir":"./src","strict":true,"noUncheckedIndexedAccess":true,"exactOptionalPropertyTypes":true,"noImplicitReturns":true,"forceConsistentCasingInFileNames":true,"esModuleInterop":true,"skipLibCheck":true,"declaration":true,"sourceMap":true},"include":["src/**/*"],"exclude":["node_modules","dist"]}
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,
+    "lib": [
+      "ES2022"
+    ],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "target": "ES2022",
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "module": "CommonJS"
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/tests"
+  ],
+  "include": [
+    "src/**/*"
+  ]
+}
