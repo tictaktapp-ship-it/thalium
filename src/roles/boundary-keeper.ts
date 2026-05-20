@@ -32,7 +32,7 @@ export async function enforceeBoundaries(
     throw new LibrarianError('Supabase credentials are missing', 'CONFIGURATION_ERROR');
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(supabaseUrl, supabaseKey, { global: { fetch: fetch.bind(globalThis) }, realtime: { timeout: 0 } as never });
 
   let rules: { blocked_terms?: string[] } = {};
   try {

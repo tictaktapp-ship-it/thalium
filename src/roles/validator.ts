@@ -56,9 +56,9 @@ export async function validate(
         verdict = 'novel_signal';
         reasoning = 'Maximum reclassification attempts reached';
       }
-    } else if (scorerPayload.confidence_score >= threshold) {
+    } else if (scorerPayload.gate_decision === 'pass' || (scorerPayload.gate_decision === 'pass_with_warning' && scorerPayload.confidence_score >= threshold)) {
       verdict = 'approved';
-      reasoning = 'Confidence score meets threshold';
+      reasoning = scorerPayload.gate_decision === 'pass_with_warning' ? 'Approved with warnings from Devil' : 'Confidence score meets threshold';
     } else {
       verdict = 'rejected';
       reasoning = 'Confidence score below threshold';

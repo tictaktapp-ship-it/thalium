@@ -23,7 +23,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('Missing Supabase configuration');
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { global: { fetch: fetch.bind(globalThis) }, realtime: { timeout: 0 } as never });
 
 export async function selectModel(intentType: string, domain: string): Promise<RouterResult> {
   try {
