@@ -365,7 +365,7 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
             seed_version: '1.0',
             generated_at: new Date().toISOString(),
           },
-          confidence: template.confidence,
+          confidence: Math.round(template.confidence * 100),
           superseded_by: null,
           created_at: new Date().toISOString(),
         });
@@ -379,7 +379,7 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
 
         // Update Coverage Map in Redis Shard C after each successful write
         if (updateCoverageMap) {
-          await updateCoverageMapEntry(brainId, addressKey, template.confidence);
+          await updateCoverageMapEntry(brainId, addressKey, Math.round(template.confidence * 100));
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
