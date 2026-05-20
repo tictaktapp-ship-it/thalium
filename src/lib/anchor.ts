@@ -43,7 +43,7 @@ export async function readAnchor(sessionId: string): Promise<AnchorState> {
             throw new LibrarianError('Anchor not found', 'VALIDATION_FAILED');
         }
 
-        const parsed = JSON.parse(anchorJson as string);
+        const parsed = typeof anchorJson === 'string' ? JSON.parse(anchorJson) : anchorJson;
         return AnchorStateSchema.parse(parsed);
     } catch (error) {
         if (error instanceof LibrarianError) {
