@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  chain-executor:
+    build:
+      context: .
+      dockerfile: Dockerfile.executor
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - APP_NAME=thalium-chain-executor
+      - DATABASE_URL=${DATABASE_URL}
+      - UPSTASH_REDIS_SHARD_A_URL=${UPSTASH_REDIS_SHARD_A_URL}
+      - UPSTASH_REDIS_SHARD_A_TOKEN=${UPSTASH_REDIS_SHARD_A_TOKEN}
+      - UPSTASH_REDIS_SHARD_B_URL=${UPSTASH_REDIS_SHARD_B_URL}
+      - UPSTASH_REDIS_SHARD_B_TOKEN=${UPSTASH_REDIS_SHARD_B_TOKEN}
+      - UPSTASH_REDIS_SHARD_C_URL=${UPSTASH_REDIS_SHARD_C_URL}
+      - UPSTASH_REDIS_SHARD_C_TOKEN=${UPSTASH_REDIS_SHARD_C_TOKEN}
+      - THALIUM_INTERNAL_SECRET=${THALIUM_INTERNAL_SECRET}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    restart: unless-stopped
+
+  instance-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile.manager
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - APP_NAME=thalium-instance-manager
+      - DATABASE_URL=${DATABASE_URL}
+      - UPSTASH_REDIS_SHARD_A_URL=${UPSTASH_REDIS_SHARD_A_URL}
+      - UPSTASH_REDIS_SHARD_A_TOKEN=${UPSTASH_REDIS_SHARD_A_TOKEN}
+      - UPSTASH_REDIS_SHARD_B_URL=${UPSTASH_REDIS_SHARD_B_URL}
+      - UPSTASH_REDIS_SHARD_B_TOKEN=${UPSTASH_REDIS_SHARD_B_TOKEN}
+      - UPSTASH_REDIS_SHARD_C_URL=${UPSTASH_REDIS_SHARD_C_URL}
+      - UPSTASH_REDIS_SHARD_C_TOKEN=${UPSTASH_REDIS_SHARD_C_TOKEN}
+      - THALIUM_INTERNAL_SECRET=${THALIUM_INTERNAL_SECRET}
+      - ACTIVE_BRAIN_IDS=${ACTIVE_BRAIN_IDS}
+    restart: unless-stopped
