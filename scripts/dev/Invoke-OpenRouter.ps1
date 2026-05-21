@@ -41,7 +41,8 @@ $Body = @{
 try {
     $Response = Invoke-RestMethod -Uri $Uri -Method Post -Body $Body `
         -ContentType 'application/json' `
-        -Headers @{ Authorization = "Bearer $ApiKey" }
+        -Headers @{ Authorization = "Bearer $ApiKey" } `
+        -TimeoutSec 300
     $Text = $Response.choices[0].message.content
     Write-Output $Text
 }
@@ -50,3 +51,4 @@ catch {
     Write-Error "OpenRouter API error ($StatusCode): $_"
     exit 1
 }
+
