@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+process.env.SUPABASE_URL = 'https://test.supabase.co';
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 
 const { mockShardCGet, mockShardCSet, mockShardCDel, mockShardCKeys } = vi.hoisted(() => ({
   mockShardCGet: vi.fn(),
@@ -91,3 +93,4 @@ describe('router', () => {
     );
   });
 });
+

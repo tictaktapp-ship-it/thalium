@@ -5,6 +5,12 @@ describe('redis module', () => {
 
   beforeEach(() => {
     vi.resetModules();
+    process.env.REDIS_SHARD_A_URL = 'https://test-a.upstash.io';
+    process.env.REDIS_SHARD_A_TOKEN = 'test-token-a';
+    process.env.REDIS_SHARD_B_URL = 'https://test-b.upstash.io';
+    process.env.REDIS_SHARD_B_TOKEN = 'test-token-b';
+    process.env.REDIS_SHARD_C_URL = 'https://test-c.upstash.io';
+    process.env.REDIS_SHARD_C_TOKEN = 'test-token-c';
   });
 
   afterEach(() => {
@@ -65,3 +71,4 @@ describe('redis module', () => {
     });
   });
 });
+
