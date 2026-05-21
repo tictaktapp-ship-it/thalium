@@ -1,0 +1,58 @@
+name: PR Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npx vitest run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          UPSTASH_REDIS_SHARD_A_URL: ${{ secrets.UPSTASH_REDIS_SHARD_A_URL }}
+          UPSTASH_REDIS_SHARD_A_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_A_TOKEN }}
+          UPSTASH_REDIS_SHARD_B_URL: ${{ secrets.UPSTASH_REDIS_SHARD_B_URL }}
+          UPSTASH_REDIS_SHARD_B_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_B_TOKEN }}
+          UPSTASH_REDIS_SHARD_C_URL: ${{ secrets.UPSTASH_REDIS_SHARD_C_URL }}
+          UPSTASH_REDIS_SHARD_C_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_C_TOKEN }}
+          THALIUM_INTERNAL_SECRET: ${{ secrets.THALIUM_INTERNAL_SECRET }}
+
+      - name: Golden path test (staging)
+        run: pwsh ./scripts/test/Invoke-ThaliumGoldenPath.ps1 -Environment staging -BrainId ${{ secrets.TEST_BRAIN_ID }} -OutputJson
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          UPSTASH_REDIS_SHARD_A_URL: ${{ secrets.UPSTASH_REDIS_SHARD_A_URL }}
+          UPSTASH_REDIS_SHARD_A_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_A_TOKEN }}
+          UPSTASH_REDIS_SHARD_B_URL: ${{ secrets.UPSTASH_REDIS_SHARD_B_URL }}
+          UPSTASH_REDIS_SHARD_B_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_B_TOKEN }}
+          UPSTASH_REDIS_SHARD_C_URL: ${{ secrets.UPSTASH_REDIS_SHARD_C_URL }}
+          UPSTASH_REDIS_SHARD_C_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_C_TOKEN }}
+          THALIUM_INTERNAL_SECRET: ${{ secrets.THALIUM_INTERNAL_SECRET }}
+
+      - name: Ring integrity suite (staging)
+        run: pwsh ./scripts/test/Invoke-ThaliumGoldenPath.ps1 -Environment staging -CheckOnly ring_integrity -OutputJson
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          UPSTASH_REDIS_SHARD_A_URL: ${{ secrets.UPSTASH_REDIS_SHARD_A_URL }}
+          UPSTASH_REDIS_SHARD_A_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_A_TOKEN }}
+          UPSTASH_REDIS_SHARD_B_URL: ${{ secrets.UPSTASH_REDIS_SHARD_B_URL }}
+          UPSTASH_REDIS_SHARD_B_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_B_TOKEN }}
+          UPSTASH_REDIS_SHARD_C_URL: ${{ secrets.UPSTASH_REDIS_SHARD_C_URL }}
+          UPSTASH_REDIS_SHARD_C_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_C_TOKEN }}
+          THALIUM_INTERNAL_SECRET: ${{ secrets.THALIUM_INTERNAL_SECRET }}

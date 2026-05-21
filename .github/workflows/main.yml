@@ -1,0 +1,42 @@
+name: Main Branch Gate
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npx vitest run
+
+      - name: Cross-tenant isolation verification
+        run: pwsh ./scripts/test/Invoke-ThaliumConsistencyAudit.ps1 -Environment staging -CheckOnly cross_tenant -OutputJson
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          UPSTASH_REDIS_SHARD_A_URL: ${{ secrets.UPSTASH_REDIS_SHARD_A_URL }}
+          UPSTASH_REDIS_SHARD_A_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_A_TOKEN }}
+          UPSTASH_REDIS_SHARD_B_URL: ${{ secrets.UPSTASH_REDIS_SHARD_B_URL }}
+          UPSTASH_REDIS_SHARD_B_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_B_TOKEN }}
+          UPSTASH_REDIS_SHARD_C_URL: ${{ secrets.UPSTASH_REDIS_SHARD_C_URL }}
+          UPSTASH_REDIS_SHARD_C_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_C_TOKEN }}
+          THALIUM_INTERNAL_SECRET: ${{ secrets.THALIUM_INTERNAL_SECRET }}
+
+      - name: Build Docker images
+        run: |
+          docker build -f Dockerfile.executor -t thalium-chain-executor:${{ github.sha }} .
+          docker build -f Dockerfile.manager -t thalium-instance-manager:${{ github.sha }} .

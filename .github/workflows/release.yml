@@ -1,0 +1,56 @@
+name: Release to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RELEASE to confirm production deployment'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'RELEASE'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Full unit test suite
+        run: npx vitest run
+
+      - name: Full consistency audit (staging)
+        run: pwsh ./scripts/test/Invoke-ThaliumConsistencyAudit.ps1 -Environment staging -OutputJson
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          UPSTASH_REDIS_SHARD_A_URL: ${{ secrets.UPSTASH_REDIS_SHARD_A_URL }}
+          UPSTASH_REDIS_SHARD_A_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_A_TOKEN }}
+          UPSTASH_REDIS_SHARD_B_URL: ${{ secrets.UPSTASH_REDIS_SHARD_B_URL }}
+          UPSTASH_REDIS_SHARD_B_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_B_TOKEN }}
+          UPSTASH_REDIS_SHARD_C_URL: ${{ secrets.UPSTASH_REDIS_SHARD_C_URL }}
+          UPSTASH_REDIS_SHARD_C_TOKEN: ${{ secrets.UPSTASH_REDIS_SHARD_C_TOKEN }}
+          THALIUM_INTERNAL_SECRET: ${{ secrets.THALIUM_INTERNAL_SECRET }}
+
+      - name: Deploy App 1 to production (Fly.io)
+        run: flyctl deploy --config fly.executor.toml --image thalium-chain-executor:${{ github.sha }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Deploy App 2 to production (Fly.io)
+        run: flyctl deploy --config fly.manager.toml --image thalium-instance-manager:${{ github.sha }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Smoke test production
+        run: |
+          curl -f https://thalium-chain-executor.fly.dev/health
+          curl -f https://thalium-instance-manager.fly.dev/health
