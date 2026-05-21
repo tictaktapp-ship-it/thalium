@@ -14,6 +14,8 @@ export default defineConfig({
       THALIUM_INTERNAL_SECRET: 'test-internal-secret',
       DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
       APP_NAME: 'thalium-test',
+      ACTIVE_BRAIN_IDS: 'brain-001,brain-002',
     },
   },
 });
+
