@@ -1,0 +1,37 @@
+# fly.manager.toml — App 2 (Instance Manager)
+app = "thalium-instance-manager"
+primary_region = "lhr"
+
+[build]
+  dockerfile = "Dockerfile.manager"
+
+[env]
+  PORT = "8081"
+  APP_NAME = "thalium-instance-manager"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 8081
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 50
+    soft_limit = 40
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[checks]
+  [checks.health]
+    grace_period = "10s"
+    interval = "15s"
+    method = "GET"
+    path = "/health"
+    port = 8081
+    timeout = "5s"
+    type = "http"
