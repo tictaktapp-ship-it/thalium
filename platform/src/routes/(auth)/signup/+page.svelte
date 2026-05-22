@@ -51,7 +51,7 @@
   async function handleStep3() {
     if (!instanceName.trim()) { error = 'Instance name is required.'; return }
     loading = true; error = ''
-    sessionStorage.setItem('thalium_signup_intent', JSON.stringify({
+    document.cookie = `thalium_intent=${encodeURIComponent(JSON.stringify({ orgName, instanceName, domain, useCase }))}; path=/; max-age=3600; SameSite=Lax`;
       orgName, instanceName, domain, useCase
     }))
     loading = false; step = 4
