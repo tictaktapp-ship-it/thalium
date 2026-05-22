@@ -1,6 +1,6 @@
 ﻿<script lang="ts">
   let { data } = $props()
-  const { instances } = data
+  const instances = $derived(data.instances)
 
   const statusColour: Record<string, string> = {
     active:       '#1A3AFF',
@@ -74,3 +74,5 @@
     {/each}
   </div>
 {/if}
+
+

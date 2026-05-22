@@ -13,7 +13,7 @@
     }
   }>();
 
-  let expandedEntryId: string | null = null;
+  let expandedEntryId: string | null = $state(null);
 
   const statusOptions = [
     { value: 'all', label: 'All' },
@@ -88,9 +88,9 @@
         {#each data.coverageMap as item}
           <div
             class="flex items-center gap-2 p-1.5 rounded hover:bg-ink/5 cursor-pointer"
-            on:click={() => updateFilter('intentType', item.address_key.split('.')[0])}
+            onclick={() => updateFilter('intentType', item.address_key.split('.')[0])}
           >
-            <div class="w-2 h-2 rounded-full ${getDensityColor(item.entry_count)}" />
+            <div class="w-2 h-2 rounded-full ${getDensityColor(item.entry_count)}" ></div>
             <div class="font-mono text-xs text-ink">{item.address_key}</div>
             <div class="font-mono text-xs text-ink/40 ml-auto">{item.entry_count}</div>
           </div>
@@ -99,19 +99,19 @@
 
       <div class="mt-6 pt-4 border-t border-ink/10">
         <div class="flex items-center gap-2 mb-2">
-          <div class="w-2 h-2 rounded-full bg-[#1A3AFF]" />
+          <div class="w-2 h-2 rounded-full bg-[#1A3AFF]" ></div>
           <div class="font-mono text-xs text-ink">Rich (>20)</div>
         </div>
         <div class="flex items-center gap-2 mb-2">
-          <div class="w-2 h-2 rounded-full bg-[rgba(26,58,255,0.3)]" />
+          <div class="w-2 h-2 rounded-full bg-[rgba(26,58,255,0.3)]" ></div>
           <div class="font-mono text-xs text-ink">Sparse (5-20)</div>
         </div>
         <div class="flex items-center gap-2 mb-2">
-          <div class="w-2 h-2 rounded-full bg-[#E0DED8]" />
+          <div class="w-2 h-2 rounded-full bg-[#E0DED8]" ></div>
           <div class="font-mono text-xs text-ink">Thin (1-4)</div>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-2 h-2 rounded-full border border-ink/20" />
+          <div class="w-2 h-2 rounded-full border border-ink/20" ></div>
           <div class="font-mono text-xs text-ink">Empty (0)</div>
         </div>
       </div>
@@ -140,7 +140,7 @@
         {#each statusOptions as option}
           <button
             class="px-3 py-1 text-xs rounded ${data.filters.status === option.value ? 'bg-white shadow-sm' : 'text-ink/50 hover:text-ink'}"
-            on:click={() => updateFilter('status', option.value)}
+            onclick={() => updateFilter('status', option.value)}
           >
             {option.label}
           </button>
@@ -149,7 +149,7 @@
 
       <select
         class="text-xs bg-white border border-ink/10 rounded px-3 py-1"
-        on:change={(e) => updateFilter('source', (e.target as HTMLSelectElement).value)}
+        onchange={(e) => updateFilter('source', (e.target as HTMLSelectElement).value)}
       >
         {#each sourceOptions as option}
           <option value={option.value} selected={data.filters.source === option.value}>
@@ -176,7 +176,7 @@
               <td class="p-2">
                 <div
                   class="font-mono text-xs text-signal cursor-pointer"
-                  on:click={() => toggleExpand(entry.id)}
+                  onclick={() => toggleExpand(entry.id)}
                 >
                   {entry.address_key}
                 </div>
@@ -217,7 +217,7 @@
         <button
           class="px-3 py-1 text-xs bg-ink/5 rounded disabled:opacity-30"
           disabled={data.page <= 1}
-          on:click={() => {
+          onclick={() => {
             const params = new URLSearchParams(window.location.search);
             params.set('page', (data.page - 1).toString());
             goto(`?${params.toString()}`);
@@ -228,7 +228,7 @@
         <button
           class="px-3 py-1 text-xs bg-ink/5 rounded disabled:opacity-30"
           disabled={data.page >= Math.ceil(data.totalCount / data.pageSize)}
-          on:click={() => {
+          onclick={() => {
             const params = new URLSearchParams(window.location.search);
             params.set('page', (data.page + 1).toString());
             goto(`?${params.toString()}`);
