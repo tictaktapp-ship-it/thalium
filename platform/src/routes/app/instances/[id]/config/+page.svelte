@@ -3,9 +3,9 @@
 
   let { data, form } = $props()
 
-  const rc = data.config.role_config ?? {}
-  const mp = data.config.model_preferences ?? {}
-  const gr = data.config.guardrails ?? {}
+  const rc = $derived(data.config.role_config ?? {})
+  const mp = $derived(data.config.model_preferences ?? {})
+  const gr = $derived(data.config.guardrails ?? {})
 
   let saving = $state(false)
 
