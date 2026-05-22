@@ -126,7 +126,7 @@
 
     <!-- Top bar -->
     <header class="h-14 bg-white border-b border-rule flex items-center px-10 flex-shrink-0 sticky top-0 z-10">
-      <span class="font-syne text-sm" style="color: rgba(13,13,13,0.4)">{$page.url.pathname.replace('/app/', '').replace(/\//g, ' / ')}</span>
+      <span class="font-syne text-sm" style="color: rgba(13,13,13,0.4)">Thalium</span>
     </header>
 
     <!-- Content -->
