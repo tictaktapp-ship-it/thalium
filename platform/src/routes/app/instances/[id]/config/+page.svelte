@@ -4,19 +4,9 @@
   let { data, form } = $props()
 
   const rc = $derived(data.config.role_config ?? {})
-  const mp = $derived(data.config.model_preferences ?? {})
   const gr = $derived(data.config.guardrails ?? {})
 
   let saving = $state(false)
-
-  const models = [
-    'openai/gpt-4o',
-    'openai/gpt-4o-mini',
-    'openai/gpt-4-turbo',
-    'anthropic/claude-sonnet-4-5',
-    'anthropic/claude-haiku-4-5',
-    'google/gemini-pro-1.5',
-  ]
 </script>
 
 <div class="space-y-10 max-w-2xl">
@@ -47,25 +37,28 @@
       </p>
       <div class="bg-white border border-rule divide-y divide-rule">
         {#each [
-          { key: 'interrogator',    label: 'Interrogator',    desc: 'Fires clarifying questions when intent is ambiguous' },
-          { key: 'architect',       label: 'Architect',       desc: 'Structures the artifact — always active', locked: true },
-          { key: 'devil',           label: 'Devil',           desc: 'Challenges the artifact before scoring' },
-          { key: 'scorer',          label: 'Scorer',          desc: 'Gates the artifact against the confidence threshold — always active', locked: true },
-          { key: 'forecaster',      label: 'Forecaster',      desc: 'Activates for risk and planning chains to produce estimates' },
-          { key: 'epidemiologist',  label: 'Epidemiologist',  desc: 'Surfaces historical patterns from the ring in background' },
+          { key: 'interrogator',   label: 'Interrogator',   desc: 'Fires clarifying questions when intent is ambiguous', locked: false },
+          { key: 'architect',      label: 'Architect',      desc: 'Structures the artifact — always active',             locked: true  },
+          { key: 'devil',          label: 'Devil',          desc: 'Challenges the artifact before scoring',              locked: false },
+          { key: 'scorer',         label: 'Scorer',         desc: 'Gates the artifact against the confidence threshold — always active', locked: true },
+          { key: 'forecaster',     label: 'Forecaster',     desc: 'Activates for risk and planning chains to produce estimates', locked: false },
+          { key: 'epidemiologist', label: 'Epidemiologist', desc: 'Surfaces historical patterns from the ring in background', locked: false },
         ] as role}
           <div class="flex items-center justify-between px-5 py-4">
             <div>
-              <p class="font-syne font-bold text-sm text-ink">{role.label}</p>
+              <p class="font-syne font-bold text-sm text-ink">{role.label}
+                {#if role.locked}<span class="font-syne font-normal text-xs text-ink/30 ml-2">always on</span>{/if}
+              </p>
               <p class="font-syne text-xs text-ink/40 mt-0.5">{role.desc}</p>
             </div>
-            <input
-              type="checkbox"
-              name="role_{role.key}"
-              checked={role.locked ? true : (rc[role.key]?.active ?? true)}
-              disabled={role.locked}
-              class="w-4 h-4 accent-ink"
-            />
+            {#if role.locked}
+              <input type="checkbox" name="role_{role.key}" checked disabled
+                class="w-4 h-4 accent-ink opacity-40"/>
+            {:else}
+              <input type="checkbox" name="role_{role.key}"
+                checked={rc[role.key]?.active ?? true}
+                class="w-4 h-4 accent-ink"/>
+            {/if}
           </div>
         {/each}
       </div>
@@ -73,57 +66,24 @@
       <div class="mt-4 flex items-center gap-4 px-5 py-4 bg-white border border-rule">
         <div>
           <p class="font-syne font-bold text-sm text-ink">Scorer confidence threshold</p>
-          <p class="font-syne text-xs text-ink/40 mt-0.5">Artifacts scoring below this are flagged or blocked. Default: 75.</p>
+          <p class="font-syne text-xs text-ink/40 mt-0.5">Artifacts scoring below this are flagged. Default: 75. Range: 50–99.</p>
         </div>
-        <input
-          type="number"
-          name="scorer_threshold"
-          min="50" max="99"
+        <input type="number" name="scorer_threshold" min="50" max="99"
           value={rc.scorer?.threshold ?? 75}
           class="w-20 border border-rule px-3 py-2 font-mono text-sm text-ink text-right
-            focus:outline-none focus:border-ink/40 rounded ml-auto"
-        />
-      </div>
-    </section>
-
-    <!-- Model preferences -->
-    <section>
-      <h2 class="font-syne font-bold text-base text-ink mb-1">Model preferences</h2>
-      <p class="font-syne text-sm text-ink/40 mb-5">
-        Set preferred models per chain tier. OpenRouter routes to these first.
-      </p>
-      <div class="bg-white border border-rule divide-y divide-rule">
-        {#each [
-          { name: 'model_primary',  label: 'Primary',    desc: 'Full chain — Architect, Devil, Scorer',  val: mp.primary    ?? 'openai/gpt-4o' },
-          { name: 'model_fallback', label: 'Fallback',   desc: 'Used when primary is unavailable',        val: mp.fallback   ?? 'anthropic/claude-sonnet-4-5' },
-          { name: 'model_fast',     label: 'Fast chain', desc: 'Triage, Listener — speed-optimised tier', val: mp.fast_chain ?? 'openai/gpt-4o-mini' },
-        ] as m}
-          <div class="flex items-center justify-between px-5 py-4 gap-6">
-            <div class="min-w-0">
-              <p class="font-syne font-bold text-sm text-ink">{m.label}</p>
-              <p class="font-syne text-xs text-ink/40 mt-0.5">{m.desc}</p>
-            </div>
-            <select name={m.name} value={m.val}
-              class="border border-rule bg-paper/50 px-3 py-2 font-mono text-xs text-ink
-                focus:outline-none focus:border-ink/40 rounded flex-shrink-0">
-              {#each models as model}
-                <option value={model} selected={m.val === model}>{model}</option>
-              {/each}
-            </select>
-          </div>
-        {/each}
+            focus:outline-none focus:border-ink/40 rounded ml-auto"/>
       </div>
     </section>
 
     <!-- Guardrails -->
     <section>
       <h2 class="font-syne font-bold text-base text-ink mb-1">Guardrails</h2>
-      <p class="font-syne text-sm text-ink/40 mb-5">Input limits and safety controls.</p>
+      <p class="font-syne text-sm text-ink/40 mb-5">Input limits and safety controls for this Brain Instance.</p>
       <div class="bg-white border border-rule divide-y divide-rule">
         <div class="flex items-center justify-between px-5 py-4">
           <div>
             <p class="font-syne font-bold text-sm text-ink">Max input tokens</p>
-            <p class="font-syne text-xs text-ink/40 mt-0.5">Inputs above this limit are rejected. Default: 32,000.</p>
+            <p class="font-syne text-xs text-ink/40 mt-0.5">Inputs above this limit are rejected before the chain runs. Default: 32,000.</p>
           </div>
           <input type="number" name="max_input_tokens" min="1000" max="200000"
             value={gr.max_input_tokens ?? 32000}
@@ -141,8 +101,8 @@
         </div>
         <div class="flex items-center justify-between px-5 py-4">
           <div>
-            <p class="font-syne font-bold text-sm text-ink">Require approval above confidence</p>
-            <p class="font-syne text-xs text-ink/40 mt-0.5">Route artifacts above this score to an approval gate. Leave blank to disable.</p>
+            <p class="font-syne font-bold text-sm text-ink">Require approval gate</p>
+            <p class="font-syne text-xs text-ink/40 mt-0.5">Route artifacts above this confidence score to a human approval gate. Leave blank to disable.</p>
           </div>
           <input type="number" name="require_approval" min="60" max="99"
             value={gr.require_approval_above_confidence ?? ''}
@@ -153,23 +113,22 @@
       </div>
     </section>
 
-    <!-- Cost cap -->
+    <!-- Monthly cap -->
     <section>
-      <h2 class="font-syne font-bold text-base text-ink mb-1">Cost controls</h2>
-      <p class="font-syne text-sm text-ink/40 mb-5">Hard monthly spend cap for this Brain Instance.</p>
+      <h2 class="font-syne font-bold text-base text-ink mb-1">Usage cap</h2>
+      <p class="font-syne text-sm text-ink/40 mb-5">
+        Set a hard monthly invocation limit for this Brain Instance. Chains are blocked once the limit is reached.
+      </p>
       <div class="bg-white border border-rule px-5 py-4 flex items-center justify-between">
         <div>
-          <p class="font-syne font-bold text-sm text-ink">Monthly cap (USD)</p>
-          <p class="font-syne text-xs text-ink/40 mt-0.5">Chains are blocked when this limit is reached. Leave blank for no cap.</p>
+          <p class="font-syne font-bold text-sm text-ink">Monthly invocation cap</p>
+          <p class="font-syne text-xs text-ink/40 mt-0.5">Leave blank for no cap.</p>
         </div>
-        <div class="flex items-center gap-2 ml-auto">
-          <span class="font-mono text-sm text-ink/40">$</span>
-          <input type="number" name="cost_cap" min="0" step="0.01"
-            value={data.config.cost_cap_monthly_usd ?? ''}
-            placeholder="—"
-            class="w-24 border border-rule px-3 py-2 font-mono text-sm text-ink text-right
-              focus:outline-none focus:border-ink/40 rounded"/>
-        </div>
+        <input type="number" name="cost_cap" min="0" step="1"
+          value={data.config.cost_cap_monthly_usd ?? ''}
+          placeholder="—"
+          class="w-24 border border-rule px-3 py-2 font-mono text-sm text-ink text-right
+            focus:outline-none focus:border-ink/40 rounded ml-auto"/>
       </div>
     </section>
 
