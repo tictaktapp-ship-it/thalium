@@ -1,15 +1,15 @@
-<#
+﻿<#
 .SYNOPSIS
     Seeds a Thalium Brain Instance with synthetic institutional ring entries.
 
 .DESCRIPTION
     Runs the cold-start seeding pipeline (src/jobs/seeder.ts) against a
-    target Brain Instance. Generates 20–30 synthetic leaf entries across all
+    target Brain Instance. Generates 20"“30 synthetic leaf entries across all
     10 standard address key regions, pre-warming the Coverage Map so the
     instance goes live with a non-empty ring.
 
     Run this after creating a new Brain Instance, before the first live
-    invocation. Re-running is safe (idempotent — adds new leaf entries,
+    invocation. Re-running is safe (idempotent "” adds new leaf entries,
     does not overwrite existing ones).
 
     After seeding:
@@ -42,7 +42,7 @@
     .\scripts\db\Invoke-SeedBrainInstance.ps1 -BrainId $env:TEST_BRAIN_ID -Domain software -Environment staging
 
 .EXAMPLE
-    # Dry run — preview only
+    # Dry run "” preview only
     .\scripts\db\Invoke-SeedBrainInstance.ps1 -BrainId $env:TEST_BRAIN_ID -DryRun
 
 .NOTES
@@ -128,7 +128,7 @@ if (@($Missing).Count -gt 0) {
 
 if ($DryRun) {
     Write-Host ''
-    Write-Host '[seed] DRY RUN — no writes will be executed' -ForegroundColor Yellow
+    Write-Host '[seed] DRY RUN "” no writes will be executed' -ForegroundColor Yellow
     Write-Host ''
     Write-Host "Brain ID : $BrainId"
     Write-Host "Domain   : $Domain"
@@ -169,7 +169,7 @@ Write-Host "[seed] Seeding Brain Instance" -ForegroundColor Cyan
 Write-Host "  Brain ID   : $BrainId"
 Write-Host "  Domain     : $Domain"
 Write-Host "  Environment: $Environment"
-Write-Host "  Timestamp  : $(Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ' -AsUTC)"
+Write-Host "  Timestamp  : $((Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))"
 Write-Host ''
 
 $SeederScript = Join-Path $ProjectRoot 'src/jobs/seeder.ts'
@@ -204,7 +204,7 @@ Write-Host ''
 Write-Host "[seed] Seeding complete in ${ElapsedMs}ms" -ForegroundColor Green
 
 # ---------------------------------------------------------------------------
-# Post-seed verification — spot check Coverage Map
+# Post-seed verification "” spot check Coverage Map
 # ---------------------------------------------------------------------------
 
 Write-Host ''
@@ -221,20 +221,25 @@ try {
     $CoverageData = Invoke-RestMethod -Uri $VerifyUrl -Method Get -Headers $Headers -ErrorAction Stop
 
     if ($CoverageData.Count -eq 0) {
-        Write-Warning '[seed] Coverage Map appears empty after seeding — check Supabase connection and librarian-write.ts'
+        Write-Warning '[seed] Coverage Map appears empty after seeding "” check Supabase connection and librarian-write.ts'
     } else {
         Write-Host "[seed] Coverage Map entries found: $($CoverageData.Count)" -ForegroundColor Green
         $CoverageData | ForEach-Object {
-            $bar = '█' * [Math]::Min([int]($_.avg_confidence * 10), 10)
+            $bar = 'â–ˆ' * [Math]::Min([int]($_.avg_confidence * 10), 10)
             Write-Host ("  {0,-50} entries={1,3}  conf={2:F2}  {3}" -f $_.address_key, $_.entry_count, $_.avg_confidence, $bar) -ForegroundColor Gray
         }
     }
 } catch {
     Write-Warning "[seed] Could not verify Coverage Map via Supabase REST API: $_"
-    Write-Warning "[seed] This does not indicate seeding failed — check the ring directly if needed."
+    Write-Warning "[seed] This does not indicate seeding failed "” check the ring directly if needed."
 }
 
 Write-Host ''
 Write-Host '[seed] Next step: invoke the chain and confirm full.artifact is produced without Interrogator activation.' -ForegroundColor Cyan
-Write-Host "       Expected: prediction_error_score < 0.7, Interrogator: skipped" -ForegroundColor Gray
+Write-Host "       Expected: prediction_error_score lt 0.7, Interrogator: skipped" -ForegroundColor Gray
 Write-Host ''
+
+
+
+
+

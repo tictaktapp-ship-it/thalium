@@ -1,4 +1,4 @@
-import { AddressKeySchema, InstitutionalRingEntrySchema, InstitutionalRingEntry } from '../schemas/ring';
+﻿import { AddressKeySchema, InstitutionalRingEntrySchema, InstitutionalRingEntry } from '../schemas/ring';
 import { z } from 'zod';
 
 export class LibrarianError extends Error {
@@ -47,10 +47,19 @@ export function validateAddressKey(key: string): void {
 }
 
 export async function librarianWrite(entry: unknown): Promise<InstitutionalRingEntry> {
-  // Step 1: Validate entry schema
+  // Step 1: Inject defaults before validation
+  // Callers provide business fields only; librarianWrite owns id, created_at, superseded_by.
+  const entryWithDefaults = {
+    id: crypto.randomUUID(),
+    superseded_by: null,
+    created_at: new Date().toISOString(),
+    ...(entry as Record<string, unknown>),
+  };
+
+  // Step 2: Validate entry schema
   let validatedEntry: InstitutionalRingEntry;
   try {
-    validatedEntry = InstitutionalRingEntrySchema.parse(entry);
+    validatedEntry = InstitutionalRingEntrySchema.parse(entryWithDefaults);
   } catch (err) {
     if (err instanceof z.ZodError) {
       throw new LibrarianError(
@@ -115,36 +124,35 @@ export async function librarianWrite(entry: unknown): Promise<InstitutionalRingE
     );
   }
 
-  // Step 4: Attempt Coverage Map update (log warning on failure)
+  // Step 4: Attempt Coverage Map update via direct upsert (log warning on failure)
   try {
-    const coverageResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/update_coverage_map`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`
-      },
-      body: JSON.stringify({ address_key: validatedEntry.address_key })
-    });
-
+    const coveragePayload = {
+      brain_id: validatedEntry.brain_id,
+      address_key: validatedEntry.address_key,
+      entry_count: 1,
+      avg_confidence: validatedEntry.confidence ?? null,
+      last_written_at: new Date().toISOString()
+    };
+    const coverageResponse = await fetch(
+      `${supabaseUrl}/rest/v1/coverage_map`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(coveragePayload)
+      }
+    );
     if (!coverageResponse.ok) {
-      console.warn(
-        new LibrarianError(
-          'Coverage Map update failed',
-          'COVERAGE_MAP_FAILED',
-          { status: coverageResponse.status }
-        )
-      );
+      console.warn(`[librarian] Coverage Map upsert failed with status ${coverageResponse.status}`);
     }
   } catch (err) {
-    console.warn(
-      new LibrarianError(
-        'Coverage Map update failed',
-        'COVERAGE_MAP_FAILED',
-        { error: err }
-      )
-    );
+    console.warn('[librarian] Coverage Map update error:', err);
   }
 
   return validatedEntry;
 }
+

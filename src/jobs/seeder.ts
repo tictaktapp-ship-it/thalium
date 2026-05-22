@@ -1,4 +1,4 @@
-/**
+﻿/**
  * src/jobs/seeder.ts
  *
  * Cold-start seeding pipeline.
@@ -365,7 +365,7 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
             seed_version: '1.0',
             generated_at: new Date().toISOString(),
           },
-          confidence: Math.round(template.confidence * 100),
+          confidence: template.confidence,
           superseded_by: null,
           created_at: new Date().toISOString(),
         });
@@ -379,7 +379,7 @@ export async function seedBrainInstance(options: SeederOptions): Promise<SeederR
 
         // Update Coverage Map in Redis Shard C after each successful write
         if (updateCoverageMap) {
-          await updateCoverageMapEntry(brainId, addressKey, Math.round(template.confidence * 100));
+          await updateCoverageMapEntry(brainId, addressKey, template.confidence);
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
@@ -478,3 +478,4 @@ if (isMain) {
       process.exit(1);
     });
 }
+
