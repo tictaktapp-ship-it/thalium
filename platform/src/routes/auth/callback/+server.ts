@@ -78,3 +78,4 @@ export async function GET({ url, cookies, locals: { supabase } }) {
   throw redirect(303, '/login?error=auth_failed')
 }
 
+

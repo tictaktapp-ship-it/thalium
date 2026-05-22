@@ -44,7 +44,7 @@ export const actions = {
         status: 'active',
         org_id: orgId,
         subscriber_id: user.id,
-        region: 'eu-west'
+        region: 'eu-west-1'
       })
     })
 
@@ -56,3 +56,4 @@ export const actions = {
     throw redirect(303, `/app/instances/${instances[0].id}`)
   }
 }
+
