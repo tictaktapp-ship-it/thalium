@@ -38,10 +38,20 @@ export const actions = {
     const res = await fetch(`${base}/rest/v1/brain_instances`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ name: name.trim(), domain: domain || 'software', status: 'active', org_id: orgId })
+      body: JSON.stringify({
+        name: name.trim(),
+        domain: domain || 'software',
+        status: 'active',
+        org_id: orgId,
+        subscriber_id: user.id,
+        region: 'eu-west'
+      })
     })
 
-    if (!res.ok) return fail(500, { error: 'Failed to create Brain Instance' })
+    if (!res.ok) {
+      const body = await res.text()
+      return fail(500, { error: `Failed to create Brain Instance: ${body}` })
+    }
     const instances = await res.json()
     throw redirect(303, `/app/instances/${instances[0].id}`)
   }

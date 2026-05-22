@@ -54,9 +54,10 @@ export const actions = {
     await fetch(`${base}/rest/v1/brain_instances`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ name: instanceName.trim(), domain: domain || 'software', status: 'active', org_id: orgId })
+      body: JSON.stringify({ name: instanceName.trim(), domain: domain || 'software', status: 'active', org_id: orgId, subscriber_id: user.id, region: 'eu-west' })
     })
 
     throw redirect(303, '/app/instances')
   }
 }
+
