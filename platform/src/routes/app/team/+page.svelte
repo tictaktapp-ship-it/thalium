@@ -98,7 +98,7 @@
       <span class="font-syne font-bold text-xs uppercase text-ink/40">Member</span>
       <span class="font-syne font-bold text-xs uppercase text-ink/40">Role</span>
       <span class="font-syne font-bold text-xs uppercase text-ink/40">Status</span>
-      <span></span>
+      <span class="font-syne font-bold text-xs uppercase text-ink/40"></span>
     </div>
 
     {#each data.members as member, i}
