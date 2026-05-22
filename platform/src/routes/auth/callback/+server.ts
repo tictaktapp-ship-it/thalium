@@ -1,4 +1,6 @@
 ﻿import { redirect } from '@sveltejs/kit'
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
+import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 
 export async function GET({ url, locals: { supabase } }) {
   const code = url.searchParams.get('code')
@@ -6,9 +8,74 @@ export async function GET({ url, locals: { supabase } }) {
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) throw redirect(303, next)
+    if (!error) {
+      // Get the session to find the user
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (user) {
+        // Check if org already exists for this user
+        const headers = {
+          apikey: SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation'
+        }
+        const base = PUBLIC_SUPABASE_URL
+
+        const existingOrg = await fetch(
+          `${base}/rest/v1/organisations?owner_id=eq.${user.id}&select=id&limit=1`,
+          { headers }
+        )
+        const orgs = await existingOrg.json()
+
+        // Only provision if no org exists yet
+        if (orgs.length === 0) {
+          // Read intent from cookie (set by signup page)
+          const intentCookie = url.searchParams.get('intent')
+          let orgName = 'My Organisation'
+          let instanceName = 'Production Brain'
+          let domain = 'software'
+
+          if (intentCookie) {
+            try {
+              const intent = JSON.parse(decodeURIComponent(intentCookie))
+              orgName = intent.orgName || orgName
+              instanceName = intent.instanceName || instanceName
+              domain = intent.domain || domain
+            } catch {}
+          }
+
+          // Create organisation
+          const orgRes = await fetch(`${base}/rest/v1/organisations`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              name: orgName,
+              owner_id: user.id
+            })
+          })
+          const orgData = await orgRes.json()
+          const orgId = orgData[0]?.id
+
+          if (orgId) {
+            // Create Brain Instance
+            await fetch(`${base}/rest/v1/brain_instances`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({
+                name: instanceName,
+                domain,
+                status: 'active',
+                org_id: orgId
+              })
+            })
+          }
+        }
+      }
+
+      throw redirect(303, next)
+    }
   }
 
-  // Auth failed — redirect to login with error
   throw redirect(303, '/login?error=auth_failed')
 }
