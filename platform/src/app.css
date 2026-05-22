@@ -1,0 +1,72 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink:          #0D0D0D;
+  --node:         #0D1A2E;
+  --signal:       #1A3AFF;
+  --signal-dark:  #6A80FF;
+  --signal-tint:  #EEF1FF;
+  --paper:        #F7F5F0;
+  --rule:         #E0DED8;
+  --white:        #FFFFFF;
+  --amber:        #B45309;
+  --amber-tint:   #FEF3C7;
+}
+
+@layer base {
+  html {
+    font-family: 'Syne', sans-serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* No border radius on containers — only on interactive elements via utility classes */
+  /* No drop shadows — enforced by design system */
+  /* No system fonts — Syne only */
+}
+
+@layer components {
+  /* Progress rule — replaces spinners */
+  .progress-rule {
+    height: 2px;
+    background-color: var(--signal);
+    animation: progress-indeterminate 1.4s ease-in-out infinite;
+  }
+
+  @keyframes progress-indeterminate {
+    0%   { transform: translateX(-100%); width: 40%; }
+    50%  { transform: translateX(60%);  width: 60%; }
+    100% { transform: translateX(200%); width: 40%; }
+  }
+
+  /* Signal node pulse — the only looping animation permitted */
+  .node-pulse {
+    animation: node-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  @keyframes node-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  /* Skeleton loading rows */
+  .skeleton {
+    background-color: color-mix(in srgb, var(--rule) 30%, transparent);
+    animation: skeleton-pulse 280ms ease-in-out infinite alternate;
+  }
+
+  @keyframes skeleton-pulse {
+    from { opacity: 0.6; }
+    to   { opacity: 1; }
+  }
+}
