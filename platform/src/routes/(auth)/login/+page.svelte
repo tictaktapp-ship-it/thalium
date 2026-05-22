@@ -33,7 +33,6 @@
 
 <div class="min-h-screen bg-paper flex flex-col items-center justify-center px-4">
 
-  <!-- Mark -->
   <div class="mb-10 flex flex-col items-center gap-3">
     <svg width="40" height="32" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
       <path d="M 10 40 C 10 18 40 6 50 6 C 60 6 90 18 90 40"
@@ -43,16 +42,13 @@
       <circle cx="50" cy="40" r="8" fill="#0D0D0D"/>
       <circle cx="50" cy="40" r="4.5" fill="#1A3AFF"/>
     </svg>
-    <span class="font-syne font-extrabold text-base tracking-widest uppercase text-ink/70 text-xs">Thalium</span>
+    <span class="font-syne font-bold text-xs tracking-widest uppercase text-ink/40">Thalium</span>
   </div>
 
-  <!-- Card -->
-  <div class="w-full max-w-sm bg-white border border-rule/60 px-10 py-10 shadow-none">
-
+  <div class="w-full max-w-sm bg-white border border-rule/60 px-10 py-10">
     <h1 class="font-syne font-bold text-xl text-ink mb-1">Sign in</h1>
     <p class="font-syne text-sm text-ink/40 mb-7">Welcome back to your Brain platform.</p>
 
-    <!-- Tabs -->
     <div class="flex gap-6 border-b border-rule mb-7">
       <button
         class="pb-3 font-syne font-bold text-xs tracking-wide uppercase transition-colors duration-150
@@ -92,8 +88,7 @@
               placeholder="you@example.com"
               onkeydown={(e) => e.key === 'Enter' && sendMagicLink()}
               class="w-full border border-rule bg-paper/50 px-3 py-2.5 font-mono text-sm text-ink
-                placeholder:text-ink/20 focus:outline-none focus:border-ink/40 rounded
-                transition-colors duration-150"
+                placeholder:text-ink/20 focus:outline-none focus:border-ink/40 rounded transition-colors"
             />
           </div>
           {#if error}
@@ -103,11 +98,8 @@
             onclick={sendMagicLink}
             disabled={loading}
             class="w-full bg-ink text-white font-syne font-bold text-xs tracking-widest uppercase
-              py-3 rounded hover:bg-ink/80 disabled:opacity-40 disabled:cursor-not-allowed
-              transition-opacity duration-150"
-          >
-            {loading ? 'Sending...' : 'Send magic link'}
-          </button>
+              py-3 rounded hover:bg-ink/80 disabled:opacity-40 transition-opacity"
+          >{loading ? 'Sending...' : 'Send magic link'}</button>
         </div>
       {/if}
     {:else}
@@ -120,8 +112,7 @@
           disabled={loading}
           class="w-full flex items-center justify-center gap-3 border border-rule
             bg-white font-syne font-bold text-xs tracking-wide uppercase text-ink py-3 rounded
-            hover:bg-paper disabled:opacity-40 disabled:cursor-not-allowed
-            transition-colors duration-150"
+            hover:bg-paper disabled:opacity-40 transition-colors"
         >
           <svg width="16" height="16" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -133,7 +124,6 @@
         </button>
       </div>
     {/if}
-
   </div>
 
   <p class="mt-8 font-syne text-xs text-ink/30 tracking-wide">
