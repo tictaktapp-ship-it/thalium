@@ -14,6 +14,7 @@
     { label: 'Instances', href: '/app/instances' },
     { label: 'Activity',  href: '/app/activity' },
     { label: 'Team',      href: '/app/team' },
+    { label: 'Billing',   href: '/app/billing' },
   ]
 
   const instanceNav = [
