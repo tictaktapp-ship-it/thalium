@@ -58,7 +58,7 @@
       {#each data.events as event, i}
         <div class="grid px-6 py-3 items-center {i < data.events.length - 1 ? 'border-b border-rule' : ''}"
           style="grid-template-columns: 160px 180px 1fr 100px">
-          
+          <a
             href="/app/instances/{event.brain_id}/audit"
             class="font-syne font-bold text-xs text-ink hover:text-signal transition-colors truncate"
           >
