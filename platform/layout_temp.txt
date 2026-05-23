@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
   import { createSupabaseBrowserClient } from '$lib/supabase'
@@ -26,15 +26,15 @@
     { label: 'Settings',      suffix: '/settings' },
   ]
 
-  function navHref(suffix) {
+  function navHref(suffix: string) {
     return `/app/instances/${instanceId}${suffix}`
   }
 
-  function isPrimaryActive(href) {
+  function isPrimaryActive(href: string) {
     return $page.url.pathname.startsWith(href)
   }
 
-  function isInstanceActive(suffix) {
+  function isInstanceActive(suffix: string) {
     if (!instanceId) return false
     const href = navHref(suffix)
     if (suffix === '') return $page.url.pathname === href
@@ -67,7 +67,8 @@
 
     <nav class="px-3 pt-4">
       {#each primaryNav as item}
-        <a href={item.href}
+        
+          href={item.href}
           class="flex items-center px-3 py-2.5 rounded font-syne font-bold text-sm mb-0.5 transition-colors duration-150"
           style={isPrimaryActive(item.href)
             ? 'color: white; background: rgba(255,255,255,0.08); border-left: 2px solid #1A3AFF; margin-left: -1px; padding-left: 11px;'
@@ -82,7 +83,8 @@
       <div class="px-3 mt-4 pt-4" style="border-top: 1px solid rgba(255,255,255,0.08)">
         <p class="px-3 font-mono text-xs uppercase tracking-wider mb-2" style="color: rgba(255,255,255,0.3)">Instance</p>
         {#each instanceNav as item}
-          <a href={navHref(item.suffix)}
+          
+            href={navHref(item.suffix)}
             class="flex items-center px-3 py-2 rounded font-syne text-sm mb-0.5 transition-colors duration-150"
             style={isInstanceActive(item.suffix)
               ? 'color: white; background: rgba(255,255,255,0.08); border-left: 2px solid #1A3AFF; margin-left: -1px; padding-left: 11px; font-weight: 700;'
@@ -104,7 +106,11 @@
           </p>
           <p class="font-mono text-xs mt-0.5" style="color: rgba(255,255,255,0.3)">Owner</p>
         </div>
-        <button onclick={signOut} class="font-mono text-xs ml-3 flex-shrink-0 transition-colors" style="color: rgba(255,255,255,0.3)">out</button>
+        <button
+          onclick={signOut}
+          class="font-mono text-xs ml-3 flex-shrink-0 transition-colors"
+          style="color: rgba(255,255,255,0.3)"
+        >out</button>
       </div>
     </div>
 
