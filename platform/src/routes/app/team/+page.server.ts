@@ -1,6 +1,7 @@
-﻿import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { redirect, fail } from '@sveltejs/kit'
+import { sendInvitationEmail } from '$lib/server/email'
 
 export async function load({ locals: { safeGetSession } }) {
   const { user } = await safeGetSession()
@@ -20,14 +21,12 @@ export async function load({ locals: { safeGetSession } }) {
   if (!orgs.length) throw redirect(303, '/app/setup')
   const org = orgs[0]
 
-  // Get all roles for this org
   const rolesRes = await fetch(
     `${base}/rest/v1/platform_roles?org_id=eq.${org.id}&select=id,user_id,role,invited_email,accepted_at,created_at`,
     { headers }
   )
   const roles = rolesRes.ok ? await rolesRes.json() : []
 
-  // Get user details for each role
   const members = await Promise.all(roles.map(async (r: { id: string, user_id: string, role: string, invited_email: string, accepted_at: string, created_at: string }) => {
     if (!r.user_id) return { ...r, email: r.invited_email, pending: true }
     const userRes = await fetch(
@@ -64,14 +63,13 @@ export const actions = {
     const base = PUBLIC_SUPABASE_URL
 
     const orgRes = await fetch(
-      `${base}/rest/v1/organisations?owner_id=eq.${user.id}&select=id&limit=1`,
+      `${base}/rest/v1/organisations?owner_id=eq.${user.id}&select=id,name&limit=1`,
       { headers }
     )
     const orgs = await orgRes.json()
     if (!orgs.length) return fail(400, { error: 'Organisation not found', action: 'invite' })
-    const orgId = orgs[0].id
+    const org = orgs[0]
 
-    // Check if user already exists in Supabase auth
     const usersRes = await fetch(
       `${base}/auth/v1/admin/users?email=${encodeURIComponent(email)}`,
       { headers }
@@ -79,13 +77,12 @@ export const actions = {
     const usersData = usersRes.ok ? await usersRes.json() : { users: [] }
     const existingUser = usersData.users?.[0]
 
-    // Create role entry
     const res = await fetch(`${base}/rest/v1/platform_roles`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
         user_id: existingUser?.id ?? null,
-        org_id: orgId,
+        org_id: org.id,
         role,
         invited_email: email,
         invited_at: new Date().toISOString()
@@ -96,6 +93,19 @@ export const actions = {
       const body = await res.text()
       return fail(500, { error: `Failed to invite: ${body}`, action: 'invite' })
     }
+
+    const inviteUrl = existingUser
+      ? `https://thalium.io/app/instances`
+      : `https://thalium.io/signup`
+
+    await sendInvitationEmail({
+      toEmail: email,
+      orgName: org.name,
+      inviterEmail: user.email ?? 'Your team',
+      role,
+      inviteUrl
+    })
+
     return { invited: true }
   },
 

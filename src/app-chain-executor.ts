@@ -1,10 +1,13 @@
 // src/app-chain-executor.ts
 import express from 'express';
+import { registerStripeWebhookRoute } from './routes/webhooks/stripe';
 import { handleChainInvocation } from './api/chain-executor';
 import { ZodError } from 'zod';
 
 const app = express();
 
+// Stripe webhook must be registered before express.json() to receive raw body
+registerStripeWebhookRoute(app);
 app.use(express.json());
 
 app.get('/health', (_, res) => {

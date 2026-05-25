@@ -1,16 +1,15 @@
-﻿import { redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { sendWelcomeEmail } from '$lib/server/email'
 
 export async function GET({ url, cookies, locals: { supabase } }) {
   const code = url.searchParams.get('code')
   const next = url.searchParams.get('next') ?? '/app/instances'
-
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser()
-
       if (user) {
         const headers = {
           apikey: SUPABASE_SERVICE_ROLE_KEY,
@@ -19,20 +18,15 @@ export async function GET({ url, cookies, locals: { supabase } }) {
           Prefer: 'return=representation'
         }
         const base = PUBLIC_SUPABASE_URL
-
-        // Check if org already exists
         const existingRes = await fetch(
           `${base}/rest/v1/organisations?owner_id=eq.${user.id}&select=id&limit=1`,
           { headers }
         )
         const orgs = await existingRes.json()
-
         if (orgs.length === 0) {
-          // Read intent from cookie
           let orgName = 'My Organisation'
           let instanceName = 'Production Brain'
           let domain = 'software'
-
           const intentCookie = cookies.get('thalium_intent')
           if (intentCookie) {
             try {
@@ -42,8 +36,6 @@ export async function GET({ url, cookies, locals: { supabase } }) {
               domain = intent.domain || domain
             } catch {}
           }
-
-          // Create organisation
           const orgRes = await fetch(`${base}/rest/v1/organisations`, {
             method: 'POST',
             headers,
@@ -51,9 +43,7 @@ export async function GET({ url, cookies, locals: { supabase } }) {
           })
           const orgData = await orgRes.json()
           const orgId = orgData[0]?.id
-
           if (orgId) {
-            // Create Brain Instance
             await fetch(`${base}/rest/v1/brain_instances`, {
               method: 'POST',
               headers,
@@ -64,18 +54,19 @@ export async function GET({ url, cookies, locals: { supabase } }) {
                 org_id: orgId
               })
             })
+            if (user.email) {
+              await sendWelcomeEmail({
+                toEmail: user.email,
+                orgName,
+                instanceName
+              })
+            }
           }
-
-          // Clear intent cookie
           cookies.delete('thalium_intent', { path: '/' })
         }
       }
-
       throw redirect(303, next)
     }
   }
-
   throw redirect(303, '/login?error=auth_failed')
 }
-
-
