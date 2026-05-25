@@ -176,6 +176,23 @@ export function createRouter(): Router {
     res.status(200).json({ models: [] });
   });
 
+  router.post('/v1/brain/:brainId/seed', requireScope('admin'), async (req, res) => {
+    try {
+      const brainId = String(req.params['brainId'] ?? '');
+      const rawDomain = req.body?.domain; const domain = typeof rawDomain === 'string' ? rawDomain : undefined;
+      if (!domain) {
+        res.status(400).json({ error: 'bad_request', code: 'missing_domain' });
+        return;
+      }
+      const { seedBrainInstance } = await import('../lib/seeder');
+      const result = await seedBrainInstance(brainId, domain);
+      res.status(200).json(result);
+    } catch (err) {
+      console.error('Seed error:', err);
+      res.status(500).json({ error: 'internal_error' });
+    }
+  });
+
   router.get('/v1/brain/:brainId/status', requireScope('invoke'), async (req, res) => {
     try {
       const { brainId } = req.params;
