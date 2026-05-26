@@ -14,13 +14,13 @@ const log = (level: 'info' | 'error' | 'warn', message: string, context?: Record
 };
 
 const redisShardA = new Redis({
-  url: process.env.UPSTASH_REDIS_SHARD_A_URL!,
-  token: process.env.UPSTASH_REDIS_SHARD_A_TOKEN!,
+  url: process.env.REDIS_SHARD_A_URL!,
+  token: process.env.REDIS_SHARD_A_TOKEN!,
 });
 
 const redisShardC = new Redis({
-  url: process.env.UPSTASH_REDIS_SHARD_C_URL!,
-  token: process.env.UPSTASH_REDIS_SHARD_C_TOKEN!,
+  url: process.env.REDIS_SHARD_C_URL!,
+  token: process.env.REDIS_SHARD_C_TOKEN!,
 });
 
 const pool = new Pool({
