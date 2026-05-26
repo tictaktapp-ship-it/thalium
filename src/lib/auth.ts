@@ -22,8 +22,8 @@ const dbPool = new Pool({
 });
 
 const shardB = new Redis({
-  url: process.env.UPSTASH_REDIS_SHARD_B_URL,
-  token: process.env.UPSTASH_REDIS_SHARD_B_TOKEN,
+  url: process.env.REDIS_SHARD_B_URL,
+  token: process.env.REDIS_SHARD_B_TOKEN,
 });
 
 export function hashApiKey(apiKey: string): string {

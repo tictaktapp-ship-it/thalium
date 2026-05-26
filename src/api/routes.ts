@@ -12,14 +12,13 @@ declare global {
 }
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const shardC = new Redis({ url: process.env.UPSTASH_REDIS_SHARD_C_URL!, token: process.env.UPSTASH_REDIS_SHARD_C_TOKEN! });
+const shardC = new Redis({ url: process.env.REDIS_SHARD_C_URL!, token: process.env.REDIS_SHARD_C_TOKEN! });
 
 const InvokeBodySchema = z.object({
-  session_id: z.string(),
-  entity_id: z.string(),
-  input: z.object({ type: z.string(), content: z.string() }),
-  output_schema: z.string().optional(),
-  role_config: z.object({}).passthrough().optional()
+  input: z.string().min(1),
+  brain_id: z.string().min(1),
+  domain: z.string().min(1),
+  session_id: z.string().optional(),
 });
 
 const MemoryWriteBodySchema = z.object({
@@ -37,7 +36,7 @@ const CreateBrainBodySchema = z.object({
 
 export function requireInternalHeader(req: Request, res: Response, next: NextFunction): void {
   const header = req.headers['x-thalium-internal'];
-  if (header !== process.env.THALIUM_INTERNAL_SECRET) {
+  if (header !== process.env.X_THALIUM_INTERNAL) {
     res.status(401).json({ error: 'unauthorized', code: 'missing_internal_header' });
     return;
   }
