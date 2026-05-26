@@ -1,8 +1,8 @@
-﻿import { createSupabaseServerClient } from '$lib/server/supabase'
+import { createSupabaseServerClient } from '$lib/server/supabase'
 import { redirect, type Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
-const PUBLIC_ROUTES = ['/login', '/signup', '/auth/callback']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/auth/callback', '/how-it-works', '/pricing', '/security', '/terms', '/privacy', '/company', '/product']
 
 const supabaseHandle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createSupabaseServerClient(event.cookies)
@@ -32,11 +32,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
   const isAppRoute = path.startsWith('/app')
 
   if (isAppRoute && !session) throw redirect(303, '/login')
-  if (isPublicRoute && session && path !== '/auth/callback') throw redirect(303, '/app/instances')
-  if (path === '/') {
-    if (session) throw redirect(303, '/login')
-    throw redirect(303, '/login')
-  }
+  if (session && (path === '/login' || path === '/signup')) throw redirect(303, '/app/instances')
 
   return resolve(event)
 }
