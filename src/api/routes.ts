@@ -134,22 +134,22 @@ export function createRouter(): Router {
     res.status(202).json({ status: 'accepted' });
   });
 
-  router.get('/v1/brain/:brainId/artifacts', requireScope('memory:read'), (_req, res) => {
-    res.status(200).json({ artifacts: [], total: 0 });
+  router.get('/v1/brain/:brainId/artifacts', requireScope('memory:read'), async (req, res) => {
+    try {
+      const brainId = String(req.params['brainId'] ?? '');
+      const limit = Math.min(parseInt(String(req.query['limit'] ?? '20')), 100);
+      const offset = parseInt(String(req.query['offset'] ?? '0'));
+      const { rows } = await pool.query(
+        `SELECT id, session_id, brain_id, status, address_key, confidence_score, gate_decision, created_at FROM artifacts WHERE brain_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+        [brainId, limit, offset]
+      );
+      const { rows: countRows } = await pool.query(`SELECT COUNT(*)::int as total FROM artifacts WHERE brain_id = $1`, [brainId]);
+      res.status(200).json({ artifacts: rows, total: countRows[0]?.total ?? 0 });
+    } catch (err) { res.status(500).json({ error: 'internal_error' }); }
   });
-
-  router.post('/v1/brain/:brainId/artifacts/:artifactId/approve', requireScope('memory:write'), (_req, res) => {
-    res.status(200).json({ status: 'approved' });
-  });
-
-  router.get('/v1/brain/:brainId/audit', requireScope('audit:read'), (_req, res) => {
-    res.status(200).json({ entries: [], total: 0 });
-  });
-
   router.get('/v1/brain/:brainId/trace/:traceId', requireScope('audit:read'), (_req, res) => {
     res.status(200).json({ trace: null });
   });
-
   router.post('/v1/brain', requireScope('admin'), async (req, res) => {
     try {
       CreateBrainBodySchema.parse(req.body);

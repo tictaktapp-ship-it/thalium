@@ -1,7 +1,10 @@
-import { readAnchor, writeContribution } from '../lib/anchor';
+﻿import { readAnchor, writeContribution } from '../lib/anchor';
 import { AnchorContribution } from '../schemas/anchor';
 import { ArtifactOutput } from '../schemas/artifact';
 import { LibrarianError } from '../lib/librarian-write';
+import { Pool } from 'pg';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export interface ScribeResult {
   artifact: ArtifactOutput;
@@ -15,28 +18,18 @@ export async function scribe(
 ): Promise<ScribeResult> {
   try {
     const anchor = await readAnchor(sessionId);
-
     const architectContribution = anchor.contributions.find(
       (c) => c.role === 'architect'
     );
     if (!architectContribution) {
       throw new LibrarianError('Architect contribution missing', 'VALIDATION_FAILED');
     }
-
     const scorerContribution = anchor.contributions.find(
       (c) => c.role === 'scorer'
     );
     if (!scorerContribution) {
       throw new LibrarianError('Scorer contribution missing', 'VALIDATION_FAILED');
     }
-
-    const devilContribution = anchor.contributions.find(
-      (c) => c.role === 'devil'
-    );
-    const validatorContribution = anchor.contributions.find(
-      (c) => c.role === 'validator'
-    );
-
     const artifact: ArtifactOutput = {
       session_id: sessionId,
       brain_id: brainId,
@@ -68,10 +61,31 @@ export async function scribe(
         artifact_assembled: true,
         session_id: sessionId
       },
-
     };
 
     await writeContribution(sessionId, scribeContribution);
+
+    // Persist artifact to Supabase — fire and forget, never blocks return
+    pool.query(
+      `INSERT INTO artifacts (session_id, brain_id, status, address_key, content, confidence_score, gate_decision, provenance, anchor_trace, created_at)
+       VALUES ($1::uuid, $2::uuid, $3, $4, $5, $6, $7, $8, $9, $10)`,
+      [
+        artifact.session_id,
+        artifact.brain_id,
+        artifact.status,
+        artifact.address_key,
+        JSON.stringify(artifact.content),
+        artifact.confidence_score,
+        artifact.gate_decision,
+        JSON.stringify(artifact.provenance),
+        JSON.stringify(artifact.anchor_trace),
+        artifact.created_at
+      ]
+    ).then(() => {
+      console.log(JSON.stringify({ timestamp: new Date().toISOString(), level: 'info', component: 'scribe', message: 'Artifact persisted', session_id: sessionId }));
+    }).catch((err: unknown) => {
+      console.log(JSON.stringify({ timestamp: new Date().toISOString(), level: 'error', component: 'scribe', message: 'Artifact persistence failed', session_id: sessionId, error: err instanceof Error ? err.message : 'Unknown error' }));
+    });
 
     return {
       artifact,
