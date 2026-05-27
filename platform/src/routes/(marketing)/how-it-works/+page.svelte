@@ -1,4 +1,8 @@
-﻿<svelte:head>
+﻿<script lang="ts">
+  import InvocationFlowDiagram from '$lib/components/diagrams/InvocationFlowDiagram.svelte';
+  import MemoryRingsDiagram from '$lib/components/diagrams/MemoryRingsDiagram.svelte';
+</script>
+<svelte:head>
   <title>How Thalium works — Brain-as-a-Service architecture</title>
   <meta name="description" content="How Thalium works: the invocation lifecycle, memory architecture, governance pipeline, and the role chain that powers every Brain Instance." />
 </svelte:head>
@@ -84,6 +88,32 @@
   </div>
 </section>
 
+
+<section style="padding:64px 0;background:white;border-top:1px solid #E0DED8;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 40px;">
+    <p style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;color:rgba(13,13,13,0.3);margin-bottom:32px;">INVOCATION FLOW — LIVE</p>
+    <div style="display:flex;justify-content:center;">
+      <InvocationFlowDiagram width={700} height={200} />
+    </div>
+    <p style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.2);text-align:center;margin-top:16px;">API CALL → ANCHOR → ROLE CHAIN → ARTIFACT → RING WRITE</p>
+  </div>
+</section>
+
+<section style="padding:64px 0;background:#F7F5F0;border-top:1px solid #E0DED8;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 40px;">
+    <p style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;color:rgba(13,13,13,0.3);margin-bottom:32px;">THREE-RING MEMORY — LIVE</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+      <div style="display:flex;justify-content:center;">
+        <MemoryRingsDiagram width={400} height={400} />
+      </div>
+      <div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:24px;color:#0D0D0D;margin-bottom:24px;">Memory that compounds</h3>
+        <p style="font-family:'Syne',sans-serif;font-size:15px;color:rgba(13,13,13,0.6);line-height:1.7;margin-bottom:20px;">The innermost ring (session) resets after each session. The middle ring (entity) persists the history of named things. The outer ring (institutional) grows permanently — every invocation adds to it, and it never forgets.</p>
+        <p style="font-family:'Syne',sans-serif;font-size:15px;color:rgba(13,13,13,0.6);line-height:1.7;">Watch the outer ring brighten over time as entries accumulate. That brightening is the Brain getting smarter.</p>
+      </div>
+    </div>
+  </div>
+</section>
 <section style="background:#0D0D0D;padding:96px 0;">
   <div style="max-width:1200px;margin:0 auto;padding:0 40px;text-align:center;">
     <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,44px);color:#E8E4DC;line-height:1.15;margin-bottom:24px;">Ready to give your application a Brain?</h2>
