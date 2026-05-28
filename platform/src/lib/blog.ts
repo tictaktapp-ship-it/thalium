@@ -20,8 +20,9 @@ const files: Record<string, string> = import.meta.glob(
 function processPost(filePath: string, content: string): BlogPost | null {
   try {
     const { data, content: body } = matter(content);
+    console.log('frontmatter data:', JSON.stringify(data));
     if (!data.title || !data.date || !data.category || !data.excerpt || !data.author) {
-      console.warn(`Missing frontmatter in ${filePath}`);
+      console.warn('Missing frontmatter fields in', filePath, JSON.stringify(data));
       return null;
     }
     const html = marked.parse(body) as string;
@@ -40,7 +41,7 @@ function processPost(filePath: string, content: string): BlogPost | null {
       html
     };
   } catch (e) {
-    console.warn(`Error processing ${filePath}:`, e);
+    console.warn('Error processing', filePath, e);
     return null;
   }
 }
@@ -51,7 +52,7 @@ const allPosts: BlogPost[] = Object.entries(files)
   .sort((a, b) => b.date.localeCompare(a.date));
 
 export function getAllPosts(): BlogPost[] {
-  console.log('getAllPosts called, allPosts length:', allPosts.length);
+  console.log('getAllPosts called, count:', allPosts.length);
   console.log('files keys:', Object.keys(files));
   return [...allPosts];
 }
