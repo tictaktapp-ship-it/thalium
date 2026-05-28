@@ -10,13 +10,16 @@
 </script>
 
 <svelte:head>
+  {#if post}
   <title>{post.title} — Thalium</title>
   <meta name="description" content={post.excerpt} />
   <meta property="og:title" content={post.title} />
   <meta property="og:description" content={post.excerpt} />
   <meta property="og:type" content="article" />
+  {/if}
 </svelte:head>
 
+{#if post}
 <div style="background: #F7F5F0; padding: 48px 0 32px; border-bottom: 1px solid #E0DED8;">
   <div style="max-width: 680px; margin: 0 auto; padding: 0 24px;">
     <div style="font-family: 'DM Mono', monospace; font-size: 11px; color: #8A8C8F; margin-bottom: 16px;">
@@ -64,6 +67,12 @@
     </div>
   </div>
 </div>
+{:else}
+<div style="max-width: 680px; margin: 80px auto; padding: 0 24px; text-align: center;">
+  <p style="font-family: 'Poppins', sans-serif; color: #8A8C8F;">Post not found.</p>
+  <a href="/blog" style="color: #1A3AFF;">Back to blog</a>
+</div>
+{/if}
 
 <style>
   .prose :global(h2) { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.25rem; color: #0D1A2E; margin-top: 2.5rem; margin-bottom: 0.75rem; line-height: 1.3; }
