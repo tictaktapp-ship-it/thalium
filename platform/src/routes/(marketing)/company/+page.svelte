@@ -1,4 +1,4 @@
-﻿<svelte:head>
+<svelte:head>
   <title>Company — Thalium</title>
   <meta name="description" content="About Thalium — Brain-as-a-Service intelligence middleware. Built for production applications that need to learn, remember, and improve." />
 </svelte:head>

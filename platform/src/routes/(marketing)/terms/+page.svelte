@@ -1,4 +1,4 @@
-﻿<svelte:head>
+<svelte:head>
   <title>Terms of Service — Thalium</title>
   <meta name="description" content="Thalium Terms of Service. Read our terms governing use of the Thalium Brain-as-a-Service platform." />
 </svelte:head>

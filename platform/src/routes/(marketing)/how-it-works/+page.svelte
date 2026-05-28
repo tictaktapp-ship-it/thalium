@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import InvocationFlowDiagram from '$lib/components/diagrams/InvocationFlowDiagram.svelte';
   import MemoryRingsDiagram from '$lib/components/diagrams/MemoryRingsDiagram.svelte';
 </script>

@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import type { Snippet } from 'svelte';
   import { page } from '$app/stores';
 
@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-  <meta name="description" content="Thalium — Brain-as-a-Service. Persistent memory, structured reasoning, and governance delivered via API. The relay that remembers." />
+  <meta name="description" content="Thalium � Brain-as-a-Service. Persistent memory, structured reasoning, and governance delivered via API. The relay that remembers." />
   <meta property="og:site_name" content="Thalium" />
   <meta property="og:type" content="website" />
 </svelte:head>
@@ -31,7 +31,7 @@
         <circle cx="50" cy="40" r="9" fill="#0D0D0D"/>
         <circle cx="50" cy="40" r="5" fill="#1A3AFF"/>
       </svg>
-      <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:-0.02em;color:#0D0D0D;">Thalium</span>
+      <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(13,13,13,0.5);">Thalium</span>
     </a>
 
     <nav style="display:flex;align-items:center;gap:32px;">
@@ -63,7 +63,7 @@
             <circle cx="50" cy="40" r="9" fill="#E8E4DC"/>
             <circle cx="50" cy="40" r="5" fill="#6A80FF"/>
           </svg>
-          <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#E8E4DC;">Thalium</span>
+          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Thalium</span>
         </div>
         <p style="font-family:'Syne',sans-serif;font-size:13px;color:rgba(255,255,255,0.35);line-height:1.7;max-width:280px;">Brain-as-a-Service. Persistent memory, structured reasoning, and governance delivered via API.</p>
       </div>
@@ -87,7 +87,7 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding-top:32px;">
-      <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.2);">© 2026 Thalium. All rights reserved.</p>
+      <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.2);">� 2026 Thalium. All rights reserved.</p>
       <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.2);">The relay that remembers.</p>
     </div>
   </div>

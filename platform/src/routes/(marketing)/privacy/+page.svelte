@@ -1,4 +1,4 @@
-﻿<svelte:head>
+<svelte:head>
   <title>Privacy Policy — Thalium</title>
   <meta name="description" content="Thalium Privacy Policy. How we collect, use, and protect your data." />
 </svelte:head>

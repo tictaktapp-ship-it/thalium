@@ -1,4 +1,4 @@
-﻿<svelte:head>
+<svelte:head>
   <title>Security — Thalium</title>
   <meta name="description" content="Thalium security posture: tenant isolation, API key scoping, immutable audit logs, source-tagged memory writes, and confidence monitoring." />
 </svelte:head>

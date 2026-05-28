@@ -1,4 +1,4 @@
-﻿<svelte:head>
+<svelte:head>
   <title>Pricing — Thalium</title>
   <meta name="description" content="Thalium pricing: start free with Spark, scale to Neuron, Lobe, Studio, or Enterprise. Persistent AI memory from £29/month." />
 </svelte:head>
