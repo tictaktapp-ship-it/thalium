@@ -1,5 +1,5 @@
 ﻿import type { PageServerLoad } from './';
-import { getDocPage } from '/docs';
+import { getDocPage } from '$lib/docs';
 import { error } from '@sveltejs/kit';
 export const load: PageServerLoad = async () => {
   const page = getDocPage('quickstart');
