@@ -8,10 +8,12 @@
   let newKeyScope = $state('invocation-only')
   let revoking = $state<string | null>(null)
 
-  const scopeLabels: Record<string, string> = {
-    'invocation-only': 'Invocation only',
-    'read-only':       'Read only',
-    'full-access':     'Full access',
+  function scopeLabel(scopes: string[]): string {
+    if (!scopes || scopes.length === 0) return 'No scope';
+    if (scopes.includes('admin')) return 'Full access';
+    if (scopes.includes('memory:write')) return 'Read + write';
+    if (scopes.includes('memory:read')) return 'Read only';
+    return 'Invoke only';
   }
 
   function formatDate(iso: string | null) {
@@ -138,7 +140,7 @@
             <p class="font-mono text-xs text-ink/30 mt-0.5">{key.key_prefix}••••••••••••</p>
           </div>
           <span class="font-mono text-xs px-2 py-0.5 rounded" style="background:#EEF1FF;color:#1A3AFF">
-            {scopeLabels[key.scope] ?? key.scope}
+            {scopeLabel(key.scopes ?? [])}
           </span>
           <span class="font-mono text-xs text-ink/40">{formatDate(key.last_used_at)}</span>
           <span class="font-mono text-xs text-ink/40">{formatDate(key.created_at)}</span>

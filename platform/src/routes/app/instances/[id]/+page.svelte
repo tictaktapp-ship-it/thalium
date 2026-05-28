@@ -35,6 +35,7 @@
           <span class="font-mono text-xs text-ink/40">{data.instance.status}</span>
         </div>
         <span class="font-mono text-xs text-ink/30">{formatDate(data.instance.created_at)}</span>
+        <span class="font-mono text-xs text-ink/20 select-all" title="Brain Instance ID">{data.instance.id}</span>
       </div>
     </div>
     <a href="/app/instances/{data.instance.id}/config"

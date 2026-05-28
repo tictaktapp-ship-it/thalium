@@ -19,7 +19,7 @@ export async function load({ params }) {
   if (!instances.length) throw error(404, 'Not found')
 
   const keysRes = await fetch(
-    `${base}/rest/v1/api_keys?brain_id=eq.${id}&revoked_at=is.null&select=id,name,key_prefix,scope,last_used_at,created_at&order=created_at.desc`,
+    `${base}/rest/v1/api_keys?brain_id=eq.${id}&revoked_at=is.null&select=id,name,key_prefix,scopes,last_used_at,created_at&order=created_at.desc`,
     { headers }
   )
   const keys = keysRes.ok ? await keysRes.json() : []
@@ -63,7 +63,10 @@ export const actions = {
         name: name.trim(),
         key_prefix: prefix,
         key_hash: keyHash,
-        scope: scope || 'invocation-only'
+        scopes: scope === 'invocation-only' ? ['invoke'] :
+                scope === 'read-only' ? ['invoke', 'memory:read', 'audit:read'] :
+                scope === 'full-access' ? ['invoke', 'memory:read', 'memory:write', 'memory:admin', 'audit:read', 'config:write', 'admin'] :
+                ['invoke']
       })
     })
 
