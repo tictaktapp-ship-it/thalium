@@ -300,8 +300,9 @@
         </div>
       {/each}
     </div>
-    <div style="text-align:center;margin-top:40px;">
-      <a href="/pricing" class="cta-secondary">See full pricing details â</a>
+    <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.35);text-align:center;margin-top:32px;">Used in production by <a href="https://linup.io" style="color:#1A3AFF;text-decoration:none;">Linup.io</a> — powering ORIGIN, FORGE, and PULSE.</p>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="/pricing" class="cta-secondary">See full pricing and FAQs →</a>
     </div>
   </div>
 </section>

@@ -174,6 +174,33 @@ Params:
 - \`ring\`: session | entity | institutional
 - \`address_key\`: ltree path filter
 
+
+## Partial failure handling
+
+When any role fails, Thalium always returns a structured partial artifact. The chain.partial SSE event is emitted before full.artifact.
+
+\`\`\`json
+{
+  "type": "chain.partial",
+  "status": "partial",
+  "failed_roles": [{ "role": "devil", "reason": "timeout" }],
+  "completed_roles": ["triage", "listener", "architect", "scorer"],
+  "anchor_trace": {
+    "triage": { "status": "complete" },
+    "devil": { "status": "failed", "reason": "timeout" },
+    "scorer": { "status": "complete" }
+  }
+}
+\`\`\`
+
+The Librarian always runs in the finally block. Ring writes from completed roles are committed even on partial failure.
+
+Role failure impact:
+- devil failed: output not stress-tested, treat as unchallenged
+- scorer failed: no confidence score or gate decision, do not gate on confidence
+- boundary_keeper failed: guardrails not applied, surface for human review
+- librarian failed: ring write not committed, memory not updated
+
 ### Error Responses
 | Code | Meaning |
 |------|---------|

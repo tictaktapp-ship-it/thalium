@@ -52,6 +52,29 @@
     </div>
   </div>
 </section>
+
+<section style="padding:80px 0;background:white;border-top:1px solid #E0DED8;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 40px;">
+    <div style="max-width:800px;">
+      <p style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;color:rgba(13,13,13,0.3);margin-bottom:16px;">PROMPT INJECTION</p>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:32px;color:#0D0D0D;margin-bottom:24px;">Injection defence — three layers</h2>
+      <p style="font-family:'Syne',sans-serif;font-size:15px;color:rgba(13,13,13,0.65);line-height:1.8;margin-bottom:40px;">Thalium processes untrusted inputs including uploaded documents, webhook payloads, and user-supplied text. Three independent defence layers operate in sequence.</p>
+      {#each [
+        { n: "01", title: "Layer 1 — Cloudflare structural sanitisation", body: "Every request passes through a Cloudflare Worker before reaching Fly.io. Checks for instruction-format text in non-content fields, enforces input size limits (text: 50K chars, documents: 2M chars), rejects JSON nesting depth > 10, and flags null bytes. Anomaly rate limiting: >10 violations from one API key in 10 minutes triggers engineering review." },
+        { n: "02", title: "Layer 2 — Triage classification scope", body: "The Triage model has a single narrowly-scoped task: classify intent type. Its system prompt explicitly instructs it not to follow any instructions within input content. It cannot be prompted to change behaviour — it can only classify." },
+        { n: "03", title: "Layer 3 — Boundary Keeper output patterns", body: "The Boundary Keeper checks every artifact before it leaves the chain against configured output pattern rules. Adversarial output patterns are a built-in guardrail category. Any artifact matching an adversarial pattern is surfaced for review rather than passed." },
+      ] as layer}
+        <div style="display:flex;gap:32px;padding:32px 0;border-bottom:1px solid #E0DED8;">
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.25);min-width:24px;padding-top:4px;">{layer.n}</span>
+          <div>
+            <h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#0D0D0D;margin-bottom:10px;">{layer.title}</h4>
+            <p style="font-family:'Syne',sans-serif;font-size:14px;color:rgba(13,13,13,0.6);line-height:1.7;">{layer.body}</p>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+</section>
 <section style="padding:96px 0;background:#F7F5F0;border-top:1px solid #E0DED8;">
   <div style="max-width:1200px;margin:0 auto;padding:0 40px;">
 
