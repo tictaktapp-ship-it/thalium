@@ -1,4 +1,4 @@
-﻿import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types';
 import { getAllPosts } from '/blog';
 import { z } from 'zod';
 
