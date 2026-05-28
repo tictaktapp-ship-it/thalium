@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-  import type { BlogPost } from './blog';
+  import type { BlogPost } from '$lib/blog';
 
   let { posts }: { posts: BlogPost[] } = $props();
   let activeCategory = $state('All');
