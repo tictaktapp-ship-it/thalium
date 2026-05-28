@@ -1,7 +1,4 @@
-﻿Here's the complete implementation of `src/lib/blog.ts`:
-
-```typescript
-import matter from 'gray-matter';
+﻿import matter from 'gray-matter';
 import { marked } from 'marked';
 
 export interface BlogPost {
@@ -21,52 +18,40 @@ const files = import.meta.glob('/src/content/blog/*.md', {
   import: 'default'
 });
 
-function processPost([filePath, content]: [string, unknown]): BlogPost | null {
-  try {
-    if (typeof content !== 'string') {
-      console.warn(`Invalid content type for ${filePath}`);
-      return null;
-    }
-
-    const { data, content: body } = matter(content);
-    
-    if (!data.title || !data.date || !data.category || !data.excerpt || !data.author) {
-      console.warn(`Missing required fields in ${filePath}`);
-      return null;
-    }
-
-    const wordCount = body.split(/\s+/).length;
-    const html = marked.parse(body);
-    const slug = filePath
-      .replace('/src/content/blog/', '')
-      .replace('.md', '');
-
-    return {
-      slug,
-      title: String(data.title),
-      date: String(data.date),
-      category: String(data.category),
-      excerpt: String(data.excerpt),
-      author: String(data.author),
-      readingTime: Math.ceil(wordCount / 200),
-      html
-    };
-  } catch (error) {
-    console.warn(`Error processing ${filePath}:`, error);
+function processPost(filePath: string, content: unknown): BlogPost | null {
+  if (typeof content !== 'string') {
+    console.warn(`Invalid content for ${filePath}`);
     return null;
   }
+  const { data, content: body } = matter(content);
+  if (!data.title || !data.date || !data.category || !data.excerpt || !data.author) {
+    console.warn(`Missing frontmatter in ${filePath}`);
+    return null;
+  }
+  const html = marked.parse(body) as string;
+  const readingTime = Math.ceil(body.split(/\s+/).length / 200);
+  const slug = filePath.replace('/src/content/blog/', '').replace('.md', '');
+  return {
+    slug,
+    title: String(data.title),
+    date: String(data.date),
+    category: String(data.category),
+    excerpt: String(data.excerpt),
+    author: String(data.author),
+    readingTime,
+    html
+  };
 }
 
-export function getAllPosts(): BlogPost[] {
-  const posts = Object.entries(files)
-    .map(processPost)
-    .filter((post): post is BlogPost => post !== null);
+const allPosts: BlogPost[] = Object.entries(files)
+  .map(([path, content]) => processPost(path, content))
+  .filter((post): post is BlogPost => post !== null)
+  .sort((a, b) => b.date.localeCompare(a.date));
 
-  return posts.sort((a, b) => b.date.localeCompare(a.date));
+export function getAllPosts(): BlogPost[] {
+  return [...allPosts];
 }
 
 export function getPostBySlug(slug: string): BlogPost | null {
-  const posts = getAllPosts();
-  return posts.find(post => post.slug === slug) ?? null;
+  return allPosts.find(post => post.slug === slug) ?? null;
 }
-```
