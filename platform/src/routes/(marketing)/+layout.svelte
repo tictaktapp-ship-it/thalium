@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import type { Snippet } from 'svelte';
   import { page } from '$app/stores';
 
@@ -8,6 +8,7 @@
     { label: 'Product', href: '/product' },
     { label: 'How it works', href: '/how-it-works' },
     { label: 'Pricing', href: '/pricing' },
+    { label: 'Docs', href: '/docs' },
     { label: 'Security', href: '/security' },
     { label: 'Company', href: '/company' },
   ];
