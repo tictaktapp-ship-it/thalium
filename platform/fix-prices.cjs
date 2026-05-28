@@ -1,0 +1,10 @@
+﻿const fs = require('fs');
+const path = 'E:/thalium/platform/src/routes/(marketing)/+page.svelte';
+let c = fs.readFileSync(path, 'utf8');
+c = c.replace("trial on any paid tier \u00e2 full", "trial on any paid tier \u2014 full");
+c = c.replace("price:'\u201429/mo'", "price:'\u00a329/mo'");
+c = c.replace("price:'\u2014199/mo'", "price:'\u00a3199/mo'");
+c = c.replace("price:'\u2014599/mo'", "price:'\u00a3599/mo'");
+fs.writeFileSync(path, c, 'utf8');
+console.log('Done');
+console.log(c.match(/price:'[^']+\/mo'/g));

@@ -1,0 +1,11 @@
+﻿const fs = require('fs');
+const path = 'E:/thalium/platform/src/routes/(marketing)/+page.svelte';
+let c = fs.readFileSync(path, 'utf8');
+c = c.replace(/\u2192\x86\x92/g, '\u2192');
+c = c.replace("tier \u00e2\u0080\x94 full", "tier \u2014 full");
+c = c.replace("tier \u00e2\u20ac\x94 full", "tier \u2014 full");
+c = c.replace(/tier [^\s]+ full institutional/, "tier \u2014 full institutional");
+fs.writeFileSync(path, c, 'utf8');
+const check = c.match(/tier .{1,6} full/);
+console.log('arrows:', c.match(/works [^<]+</));
+console.log('trial:', check);
