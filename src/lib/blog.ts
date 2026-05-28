@@ -1,94 +1,52 @@
-﻿```typescript
-import { readFileSync } from 'fs';
-import { glob } from 'glob';
-import matter from 'gray-matter';
+﻿Here's the complete rewritten blog.ts file:
+
+```typescript
 import { marked } from 'marked';
-import { join } from 'path';
+import * as matter from 'gray-matter';
+import { BlogPost } from '../schemas/blog';
 
-interface BlogPostFrontmatter {
-  title: string;
-  date: string;
-  category: string;
-  excerpt: string;
-  author: string;
-}
+const files = import.meta.glob('/src/content/blog/*.md', {
+  eager: true,
+  query: '?raw',
+  import: 'default'
+});
 
-export interface BlogPost {
-  slug: string;
-  title: string;
-  date: string;
-  category: string;
-  excerpt: string;
-  author: string;
-  readingTime: number;
-  html: string;
-}
-
-const BLOG_CONTENT_PATH = join(process.cwd(), 'src/content/blog');
-
-const validateFrontmatter = (data: unknown): data is BlogPostFrontmatter => {
-  if (typeof data !== 'object' || data === null) return false;
-  const requiredFields = ['title', 'date', 'category', 'excerpt', 'author'];
-  return requiredFields.every(field => field in data);
-};
-
-const calculateReadingTime = (text: string): number => {
-  const wordCount = text.split(/\s+/).length;
-  return Math.ceil(wordCount / 200);
-};
-
-const parseBlogPost = (filePath: string, slug: string): BlogPost | null => {
+const parseBlogPost = (content: string, filePath: string): BlogPost | null => {
   try {
-    const fileContents = readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContents);
-
-    if (!validateFrontmatter(data)) {
+    const { data: frontmatter, content: markdown } = matter(content);
+    if (!frontmatter.title || !frontmatter.date || !frontmatter.excerpt) {
       console.warn(`Skipping ${filePath} - missing required frontmatter fields`);
       return null;
     }
 
-    const html = marked(content);
-    const readingTime = calculateReadingTime(content);
+    const html = marked.parse(markdown);
+    const wordCount = markdown.split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / 200);
+    const slug = filePath.replace('/src/content/blog/', '').replace('.md', '');
 
     return {
       slug,
-      title: data.title,
-      date: data.date,
-      category: data.category,
-      excerpt: data.excerpt,
-      author: data.author,
+      title: frontmatter.title,
+      date: new Date(frontmatter.date),
+      excerpt: frontmatter.excerpt,
+      html,
       readingTime,
-      html
+      ...(frontmatter.tags && { tags: frontmatter.tags })
     };
   } catch (error) {
-    console.warn(`Error processing ${filePath}:`, error);
+    console.warn(`Failed to parse ${filePath}:`, error);
     return null;
   }
 };
 
-export const getAllPosts = async (): Promise<BlogPost[]> => {
-  const files = await glob(join(BLOG_CONTENT_PATH, '**/*.md'));
-  const posts = files
-    .map(filePath => {
-      const slug = filePath
-        .replace(BLOG_CONTENT_PATH, '')
-        .replace(/^\//, '')
-        .replace(/\.md$/, '');
-      return parseBlogPost(filePath, slug);
-    })
-    .filter((post): post is BlogPost => post !== null)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+const allPosts = Object.entries(files)
+  .map(([path, content]) => parseBlogPost(content as string, path))
+  .filter((post): post is BlogPost => post !== null)
+  .sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  return posts;
-};
+export const getAllPosts = (): BlogPost[] => [...allPosts];
 
-export const getPostBySlug = async (slug: string): Promise<BlogPost | null> => {
-  const filePath = join(BLOG_CONTENT_PATH, `${slug}.md`);
-  try {
-    return parseBlogPost(filePath, slug);
-  } catch (error) {
-    console.warn(`Error loading post ${slug}:`, error);
-    return null;
-  }
+export const getPostBySlug = (slug: string): BlogPost | undefined => {
+  return allPosts.find((post) => post.slug === slug);
 };
 ```
