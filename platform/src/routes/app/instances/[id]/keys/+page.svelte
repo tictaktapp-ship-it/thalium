@@ -63,7 +63,7 @@
   {#if showCreate}
     <div class="bg-white border border-rule p-6">
       <h2 class="font-syne font-bold text-base text-ink mb-5">Create API key</h2>
-      <form method="POST" action="?/create" use:enhance class="space-y-4">
+      <form method="POST" action="?/create" use:enhance={() => { return async ({ update }) => { await update(); showCreate = false; }; }} class="space-y-4">
         <div>
           <label class="block font-syne font-bold text-xs tracking-wide uppercase text-ink/50 mb-2">
             Key name
