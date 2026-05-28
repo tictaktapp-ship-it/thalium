@@ -25,7 +25,7 @@ const INTERNAL_SECRET = 'test-internal-secret';
 function buildApp() {
   const app = express();
   app.use(express.json());
-  process.env.THALIUM_INTERNAL_SECRET = INTERNAL_SECRET;
+  process.env.X_THALIUM_INTERNAL = INTERNAL_SECRET;
   app.use(createRouter());
   return app;
 }
@@ -33,7 +33,7 @@ function buildApp() {
 describe('routes', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.THALIUM_INTERNAL_SECRET = INTERNAL_SECRET;
+    process.env.X_THALIUM_INTERNAL = INTERNAL_SECRET;
   });
 
   it('rejects request missing X-Thalium-Internal header with 401', async () => {
@@ -41,7 +41,7 @@ describe('routes', () => {
     const res = await request(app)
       .post('/v1/brain/brain-001/invoke')
       .set('Authorization', 'Bearer test-key')
-      .send({ session_id: 's1', entity_id: 'e1', input: { type: 'text', content: 'hello' } });
+      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
 
     expect(res.status).toBe(401);
     expect(res.body.code).toBe('missing_internal_header');
@@ -52,7 +52,7 @@ describe('routes', () => {
     const res = await request(app)
       .post('/v1/brain/brain-001/invoke')
       .set('X-Thalium-Internal', INTERNAL_SECRET)
-      .send({ session_id: 's1', entity_id: 'e1', input: { type: 'text', content: 'hello' } });
+      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
 
     expect(res.status).toBe(401);
     expect(res.body.code).toBe('missing_api_key');
@@ -68,7 +68,7 @@ describe('routes', () => {
       .post('/v1/brain/brain-001/invoke')
       .set('X-Thalium-Internal', INTERNAL_SECRET)
       .set('Authorization', 'Bearer bad-key')
-      .send({ session_id: 's1', entity_id: 'e1', input: { type: 'text', content: 'hello' } });
+      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
 
     expect([401, 403]).toContain(res.status);
   });
@@ -98,7 +98,7 @@ describe('routes', () => {
       .post('/v1/brain/brain-001/invoke')
       .set('X-Thalium-Internal', INTERNAL_SECRET)
       .set('Authorization', 'Bearer valid-key')
-      .send({ session_id: 's1', entity_id: 'e1', input: { type: 'text', content: 'hello' } });
+      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
 
     expect(res.status).toBe(202);
     expect(res.body.status).toBe('accepted');
