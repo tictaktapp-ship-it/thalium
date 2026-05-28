@@ -1,7 +1,7 @@
 ﻿<script lang="ts">
   import type { BlogPost } from '$lib/blog';
 
-  const { post } = $props<{ post: BlogPost }>();
+  let { post }: { post: BlogPost } = $props();
 
   function formatDate(dateStr: string): string {
     const d = new Date(dateStr);
