@@ -2,6 +2,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Pool } from 'pg';
 import { Redis } from '@upstash/redis';
 import { z } from 'zod';
+import { handleChainInvocation } from './chain-executor';
+import { handleChainInvocation } from './chain-executor';
 
 declare global {
   namespace Express {
@@ -90,7 +92,7 @@ export function createRouter(): Router {
   router.post('/v1/brain/:brainId/invoke', requireScope('invoke'), async (req, res) => {
     try {
       InvokeBodySchema.parse(req.body);
-      res.status(202).json({ status: 'accepted', message: 'chain dispatch not yet wired' });
+      await handleChainInvocation(req, res);
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400).json({ error: 'bad_request', code: 'invalid_input', detail: err.errors[0]?.message });
@@ -103,7 +105,7 @@ export function createRouter(): Router {
   router.post('/v1/brain/:brainId/invoke/stream', requireScope('invoke'), async (req, res) => {
     try {
       InvokeBodySchema.parse(req.body);
-      res.status(202).json({ status: 'accepted', message: 'stream not yet wired' });
+      await handleChainInvocation(req, res);
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400).json({ error: 'bad_request', code: 'invalid_input', detail: err.errors[0]?.message });
