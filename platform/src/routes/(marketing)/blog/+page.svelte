@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import type { BlogPost } from '$lib/blog';
 
   let { data }: { data: { posts: BlogPost[] } } = $props();
@@ -59,9 +59,9 @@
           <p class="excerpt">{post.excerpt}</p>
           <div class="meta">
             <span>{post.author}</span>
-            <span>Â·</span>
-            <span>{post.date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-            <span>Â·</span>
+            <span>·</span>
+            <span>{new Date(post.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <span>·</span>
             <span>{post.readingTime} min read</span>
           </div>
         </a>
