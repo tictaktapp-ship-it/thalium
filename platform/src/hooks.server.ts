@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from '$lib/server/supabase'
 import { redirect, type Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
-const PUBLIC_ROUTES = ['/', '/login', '/signup', '/auth/callback', '/how-it-works', '/pricing', '/security', '/terms', '/privacy', '/company', '/product']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/auth/callback', '/how-it-works', '/pricing', '/security', '/terms', '/privacy', '/company', '/product', '/blog']
 
 const supabaseHandle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createSupabaseServerClient(event.cookies)
