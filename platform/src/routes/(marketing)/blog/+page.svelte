@@ -1,7 +1,8 @@
 ﻿<script lang="ts">
   import type { BlogPost } from '$lib/blog';
 
-  let { posts = [] }: { posts: BlogPost[] } = $props();
+  let { data }: { data: { posts: BlogPost[] } } = $props();
+  const posts = data.posts ?? [];
   let activeCategory = $state('All');
 
   const categories = ['All', 'Engineering', 'Concepts', 'Security', 'Case Studies', 'Changelog'];
