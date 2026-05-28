@@ -1,0 +1,10 @@
+﻿const fs = require('fs');
+const path = 'E:/thalium/platform/src/routes/(marketing)/how-it-works/+page.svelte';
+let c = fs.readFileSync(path, 'utf8');
+c = c.replace(/â€"/g, '—');
+c = c.replace(/â€˜/g, '\u2018');
+c = c.replace(/â€™/g, '\u2019');
+c = c.replace(/â†'/g, '→');
+fs.writeFileSync(path, c, 'utf8');
+const remaining = c.match(/â€|â†/g);
+console.log('Remaining corruption:', remaining ? remaining.length : 0);
