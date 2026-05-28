@@ -1,0 +1,10 @@
+﻿const fs = require('fs');
+const path = 'E:/thalium/platform/src/routes/(marketing)/pricing/+page.svelte';
+let c = fs.readFileSync(path, 'utf8');
+c = c.replace(/Â£/g, '£');
+c = c.replace(/â€"/g, '—');
+c = c.replace(/â€˜/g, '\u2018');
+c = c.replace(/â€™/g, '\u2019');
+fs.writeFileSync(path, c, 'utf8');
+const checks = c.match(/(Â£|â€"|£29|£199|trial|overage)/g);
+console.log('Done — checks:', [...new Set(checks)]);
