@@ -43,6 +43,7 @@
     </nav>
 
     <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.28);letter-spacing:0.04em;padding-right:4px;">Your data never trains our models.</span>
       <a href="/login" style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(13,13,13,0.5);text-decoration:none;">Sign in</a>
       <a href="/signup" style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#F7F5F0;background:#0D0D0D;padding:8px 18px;border-radius:4px;text-decoration:none;transition:opacity 150ms;">Get started</a>
     </div>

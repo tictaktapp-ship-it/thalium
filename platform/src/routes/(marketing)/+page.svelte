@@ -51,10 +51,6 @@
   .section {
     padding: 96px 0;
   }
-  .section-alt {
-    padding: 96px 0;
-    background: #0D0D0D;
-  }
   .cta-primary {
     display: inline-flex;
     align-items: center;
@@ -89,13 +85,13 @@
     border: 1px solid #E0DED8;
     background: white;
   }
-  .use-case-tile {
-    padding: 32px;
+  .industry-card {
+    padding: 40px;
     border: 1px solid #E0DED8;
-    background: #F7F5F0;
+    background: white;
     transition: border-color 280ms cubic-bezier(0.16,1,0.3,1);
   }
-  .use-case-tile:hover { border-color: #1A3AFF; }
+  .industry-card:hover { border-color: #1A3AFF; }
   .capability-row {
     display: flex;
     align-items: flex-start;
@@ -111,9 +107,6 @@
     letter-spacing: 0.1em;
     min-width: 32px;
   }
-  canvas {
-    display: block;
-  }
 </style>
 
 <!-- Hero -->
@@ -123,16 +116,18 @@
       <div>
         <p class="section-label" style="margin-bottom:24px;">Brain-as-a-Service</p>
         <h1 class="hero-headline">The relay that <em>remembers.</em></h1>
-        <p class="body-text" style="margin-top:24px;max-width:440px;font-size:18px;">
+        <p class="body-text" style="margin-top:20px;max-width:440px;font-size:15px;color:rgba(13,13,13,0.45);font-style:italic;">
+          Your application calls a model. Gets an answer. Forgets everything. Every time.
+        </p>
+        <p class="body-text" style="margin-top:16px;max-width:440px;font-size:18px;">
           Stop rebuilding state management, orchestration, and audit infrastructure. One API call gives your application persistent memory, structured reasoning, and governance — permanently.
         </p>
         <div style="display:flex;align-items:center;gap:24px;margin-top:40px;">
           <a href="/signup" class="cta-primary">Get started free</a>
           <a href="/how-it-works" class="cta-secondary">See how it works →</a>
-          <a href="/docs" class="cta-secondary">Read the docs →</a>
         </div>
-        <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.3);margin-top:24px;">
-          Free tier available. No credit card required.
+        <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.3);margin-top:16px;">
+          Free tier available. No credit card required. Your data never trains our models.
         </p>
       </div>
       <div style="display:flex;justify-content:center;align-items:center;">
@@ -174,9 +169,9 @@
         <h2 class="section-heading" style="margin-bottom:48px;">One API call. A full cognitive chain.</h2>
         {#each [
           { n: '01', title: 'Invoke', body: 'Your application sends input and context. Thalium opens an Anchor — the single source of truth for the entire chain.' },
-          { n: '02', title: 'Route & classify', body: 'Triage classifies intent across 11 types. Every downstream role receives only what it needs — minimal payload, maximum precision.' },
-          { n: '03', title: 'Produce artifacts', body: 'The Architect structures output. The Devil challenges it. The Scorer gates on confidence. The result is a verifiable artifact.' },
-          { n: '04', title: 'Consolidate memory', body: 'The Librarian writes to the institutional ring. The Calibrator refines rules. The Brain gets smarter — permanently.' },
+          { n: '02', title: 'Route & classify', body: 'Every input is classified against a proprietary 11-type intent taxonomy. Each type routes through a different reasoning path.' },
+          { n: '03', title: 'Produce artifacts', body: 'A structured reasoning chain drafts the output, challenges it, and gates on confidence. The result is a verifiable artifact.' },
+          { n: '04', title: 'Consolidate memory', body: 'The result is written to the institutional ring. Scoring rules refine automatically. The Brain gets smarter — permanently.' },
         ] as step}
           <div class="capability-row">
             <span class="step-number">{step.n}</span>
@@ -200,10 +195,18 @@
 }`}</pre>
           <div style="margin-top:24px;padding-top:24px;border-top:1px solid #E0DED8;">
             <p style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.3);letter-spacing:0.1em;margin-bottom:12px;">STREAMING RESPONSE</p>
-            {#each ['fast.triage', 'full.architect', 'full.scorer', 'full.artifact'] as event}
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:#1A3AFF;flex-shrink:0;"></div>
-                <span style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.5);">{event}</span>
+            {#each [
+              { event: 'Classification result', timing: '~200ms' },
+              { event: 'Fast artifact', timing: '1–3s' },
+              { event: 'Full reasoning chain', timing: '5–12s' },
+              { event: 'Complete artifact + memory write', timing: '6–15s' },
+            ] as row}
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:6px;height:6px;border-radius:50%;background:#1A3AFF;flex-shrink:0;"></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.6);">{row.event}</span>
+                </div>
+                <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.25);">{row.timing}</span>
               </div>
             {/each}
           </div>
@@ -213,33 +216,94 @@
   </div>
 </section>
 
-<!-- Top 10 use cases -->
+<!-- Industry benefits -->
 <section class="section" style="background:white;">
   <div class="content-wrap">
     <div style="text-align:center;margin-bottom:64px;">
-      <p class="section-label">Use cases</p>
-      <h2 class="section-heading">Built for production intelligence</h2>
-      <p class="body-text" style="max-width:540px;margin:16px auto 0;">Thalium handles the cognitive infrastructure. You handle the application logic.</p>
+      <p class="section-label">Real-world impact</p>
+      <h2 class="section-heading">What it looks like when your application actually remembers</h2>
+      <p class="body-text" style="max-width:560px;margin:16px auto 0;">Every call builds on the last. Every decision is traceable. Every domain gets smarter the longer you use it.</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#E0DED8;">
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#E0DED8;">
       {#each [
-        { n:'01', title:'SaaS personalisation', body:'Learn user intent patterns across sessions. Surface relevant defaults. Improve with every interaction.' },
-        { n:'02', title:'Compliance & legal review', body:'Classify documents, flag liability, compare against standards — with a full audit trail of every decision.' },
-        { n:'03', title:'Support & incident ops', body:'Diagnose issues from symptoms, retrieve historical patterns, escalate with structured evidence.' },
-        { n:'04', title:'Internal knowledge bases', body:'Ingest documents, extract structure, answer questions with traceable provenance.' },
-        { n:'05', title:'Contract lifecycle', body:'Draft, review, track changes, and manage obligations — with memory across the full matter lifecycle.' },
-        { n:'06', title:'Clinical decision support', body:'Structured reasoning against evidence, with confidence gating before output reaches practitioners.' },
-        { n:'07', title:'Financial risk assessment', body:'Credit, concentration, regulatory — with probability estimates and documented rationale.' },
-        { n:'08', title:'Agentic pipelines', body:'Chain invocations with persistent context. Each step builds on what the Brain already knows.' },
-        { n:'09', title:'Developer tooling', body:'Code review, spec generation, architectural decisions — with memory of the full codebase history.' },
-        { n:'10', title:'Product intelligence', body:'Synthesise research, analyse usage patterns, draft strategy — with compounding institutional memory.' },
-      ] as uc}
-        <div class="use-case-tile">
-          <p style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.25);letter-spacing:0.1em;margin-bottom:12px;">{uc.n}</p>
-          <h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#0D0D0D;margin-bottom:8px;line-height:1.3;">{uc.title}</h4>
-          <p style="font-family:'Syne',sans-serif;font-size:12px;color:rgba(13,13,13,0.5);line-height:1.6;">{uc.body}</p>
+        {
+          label: 'Healthcare',
+          headline: 'A clinician asks about a patient. The Brain already knows the history.',
+          body: 'Without memory, every model call starts cold — no admission history, no record of the adverse event flagged two weeks ago, no context. The answer is generic. With Thalium, the Brain holds every prior clinical input for this patient, reasons against current evidence, gates output on confidence before it reaches clinical staff, and produces a traceable artifact showing exactly what it considered and why.',
+          benefit: 'Memory across the full patient journey. Confidence gating before output reaches clinical staff. A complete audit trail for every decision.'
+        },
+        {
+          label: 'Legal',
+          headline: 'The third amendment to a supplier contract. The Brain remembers the first two.',
+          body: 'Without memory, there is no context — no record that clause 14.2 was already negotiated down, no knowledge of the liability position taken in the last revision. With Thalium, the Brain holds the full matter history, detects the change against the prior baseline, flags clauses that conflict with previously agreed positions, and produces a structured change assessment with documented rationale.',
+          benefit: 'Matter memory across every engagement. Automatic change detection against prior baselines. Version-controlled decisions with full provenance.'
+        },
+        {
+          label: 'Financial Services',
+          headline: 'A loan application comes in. The Brain already knows this borrower\'s sector.',
+          body: 'Without memory, every credit assessment starts from nothing — no recall of how similar borrowers were assessed, no sector concentration context, no knowledge of the risk appetite thresholds previously applied. With Thalium, every prior assessment informs the current one. The Scorer gates output at the confidence threshold set by the institution. The audit log shows every step.',
+          benefit: 'Consistent reasoning across every assessment. Sector and portfolio context applied automatically. Confidence-gated outputs that meet your institution\'s standard every time.'
+        },
+        {
+          label: 'Engineering',
+          headline: 'Production is degrading. The Brain remembers the last three times this happened.',
+          body: 'Without memory, the on-call engineer starts from scratch — no record of the incident three months ago that began exactly the same way, traced to a downstream rate limit. With Thalium, the Brain holds the full incident history of this system, recognises the pattern, surfaces the prior incident and its resolution, and produces a structured diagnostic output the engineer can act on immediately.',
+          benefit: 'Pattern recognition across the full incident history. Structured diagnostics in seconds, not hours. A Brain that knows your infrastructure the way your most experienced engineer does.'
+        },
+        {
+          label: 'Compliance',
+          headline: 'The auditor raises a finding. The Brain knows what the last audit said.',
+          body: 'Without memory, every audit response is rebuilt from scratch — no context on what the prior cycle found, no record of what remediation was committed to. With Thalium, the Brain holds every prior audit cycle. It maps current evidence against committed remediation, identifies what is closed and what remains open, and produces a structured compliance narrative with the full evidential trail.',
+          benefit: 'Continuity across every audit cycle. Automatic mapping of current evidence against prior commitments. An immutable record that stands up to regulatory scrutiny.'
+        },
+        {
+          label: 'SaaS / Product',
+          headline: 'A user comes back after three months. The product remembers what they care about.',
+          body: 'Without persistent intelligence, the application treats every returning user like a new session — no memory of workflows, defaults, or intent patterns. With Thalium, the Brain retains intent patterns across every prior session. It surfaces the right defaults, anticipates the likely next action, and improves its accuracy with every interaction. The gap between a Thalium-powered product and a stateless one widens every month.',
+          benefit: 'Intent memory that persists across sessions. Personalisation that compounds — not resets. A product experience that gets demonstrably better the longer someone uses it.'
+        },
+        {
+          label: 'Operations',
+          headline: 'A supplier goes dark. The Brain already knows the exposure.',
+          body: 'Without memory, the risk picture must be rebuilt — which contracts are affected, what the concentration exposure looks like, which alternatives have been assessed. With Thalium, the Brain holds the full supplier history and portfolio exposure, retrieves prior risk assessments, surfaces the concentration picture, and produces a structured risk summary the procurement lead can take directly to the board.',
+          benefit: 'Supplier history and portfolio exposure retrieved instantly. Prior risk assessments surfaced automatically. Structured outputs your teams can act on without translation.'
+        },
+        {
+          label: 'HR',
+          headline: 'Three senior engineers resign in a month. The Brain flags it before the fourth.',
+          body: 'Without institutional memory, the analysis must be built manually — pulling exit themes, checking engagement scores, cross-referencing manager tenure. With Thalium, the Brain retains the full organisational signal history, recognises the pattern against prior retention events, identifies the structural factors that correlated with previous departures, and surfaces the point at which early intervention is most likely to be effective.',
+          benefit: 'Retention patterns surfaced before they become crises. Organisational signal history retained and interrogated automatically. Structured analysis your leadership team can act on immediately.'
+        },
+      ] as card}
+        <div class="industry-card">
+          <p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#1A3AFF;margin-bottom:16px;">{card.label}</p>
+          <h3 style="font-family:'DM Serif Display',serif;font-size:20px;color:#0D0D0D;line-height:1.25;margin-bottom:16px;">{card.headline}</h3>
+          <p class="body-text" style="font-size:14px;margin-bottom:20px;">{card.body}</p>
+          <div style="padding-top:16px;border-top:1px solid #E0DED8;">
+            <p style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#0D0D0D;line-height:1.6;">{card.benefit}</p>
+          </div>
         </div>
       {/each}
+    </div>
+    <div style="margin-top:48px;padding:40px;background:#F7F5F0;border:1px solid #E0DED8;display:flex;align-items:center;justify-content:space-between;gap:40px;">
+      <div>
+        <p style="font-family:'DM Serif Display',serif;font-size:22px;color:#0D0D0D;line-height:1.3;margin-bottom:8px;">Your domain is different. Your Brain Instance learns it.</p>
+        <p class="body-text" style="font-size:14px;max-width:600px;">A Brain Instance with six months of your domain's invocations is categorically different from a fresh deployment. The confidence calibration has adjusted to your patterns. The institutional ring holds your decisions, your reasoning, your precedents. No competitor can replicate that — because the moat is your data, not our architecture.</p>
+      </div>
+      <a href="/signup" class="cta-primary" style="white-space:nowrap;flex-shrink:0;">Start building free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Proof band -->
+<section style="background:#0D0D0D;padding:48px 0;border-top:1px solid rgba(255,255,255,0.06);">
+  <div class="content-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:40px;">
+      <div>
+        <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:12px;">In production</p>
+        <p style="font-family:'DM Serif Display',serif;font-size:22px;color:#E8E4DC;line-height:1.3;">Used in production by <a href="https://linup.io" style="color:#6A80FF;text-decoration:none;">Linup.io</a> — powering ORIGIN, FORGE, and PULSE.</p>
+      </div>
+      <p style="font-family:'Syne',sans-serif;font-size:14px;color:rgba(255,255,255,0.35);max-width:320px;line-height:1.7;flex-shrink:0;">Three production Brain Instances. Memory-conscious intelligence across specification, build verification, and system mapping workflows.</p>
     </div>
   </div>
 </section>
@@ -252,16 +316,16 @@
         <p class="section-label">Capabilities</p>
         <h2 class="section-heading">Every primitive you need</h2>
         <p class="body-text" style="margin-top:16px;font-size:14px;">Production AI infrastructure without the infrastructure engineering.</p>
-        <a href="/product" class="cta-secondary" style="display:inline-flex;margin-top:32px;">Full product overview â</a>
+        <a href="/product" class="cta-secondary" style="display:inline-flex;margin-top:32px;">Full product overview →</a>
       </div>
       <div>
         {#each [
           { title:'Brain Instances', body:'Each subscriber gets an isolated Brain Instance — a persistent intelligence context scoped to their application. Separate memory, separate rules, separate audit log.' },
           { title:'Three-ring memory architecture', body:'Session ring for live context. Entity ring for specific named things. Institutional ring for compounding domain knowledge — all addressable, all retrievable in constant time.' },
           { title:'Confidence + Coverage Map', body:'The Brain knows what it knows. The Coverage Map tracks knowledge density across address keys. The Confidence Monitor alerts when quality drifts.' },
-          { title:'11-intent Triage classification', body:'Every input is classified against 11 intent types before the chain runs. Specification, diagnosis, verification, risk assessment — each routes differently.' },
+          { title:'Proprietary intent classification', body:'Every input is classified against a 11-type intent taxonomy before the chain runs. Each type routes through a different reasoning path with different roles and confidence thresholds.' },
           { title:'Immutable audit trail', body:'Every decision, every write, every gate verdict — recorded and immutable. Built for compliance, accountability, and debugging.' },
-          { title:'Configurable guardrails', body:'Boundary Keeper enforces domain constraints before any artifact leaves the chain. Conservative, balanced, or aggressive — per Brain Instance.' },
+          { title:'Configurable guardrails', body:'Domain constraints are enforced before any artifact leaves the chain. Conservative, balanced, or aggressive — configured per Brain Instance.' },
         ] as cap}
           <div class="capability-row">
             <div>
@@ -300,8 +364,7 @@
         </div>
       {/each}
     </div>
-    <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.35);text-align:center;margin-top:32px;">Used in production by <a href="https://linup.io" style="color:#1A3AFF;text-decoration:none;">Linup.io</a> — powering ORIGIN, FORGE, and PULSE.</p>
-    <div style="text-align:center;margin-top:12px;">
+    <div style="text-align:center;margin-top:32px;">
       <a href="/pricing" class="cta-secondary">See full pricing and FAQs →</a>
     </div>
   </div>
@@ -314,8 +377,8 @@
       <div>
         <p style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;color:rgba(255,255,255,0.25);margin-bottom:16px;">SECURITY & PRIVACY</p>
         <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(28px,3.5vw,40px);color:#E8E4DC;line-height:1.15;margin-bottom:16px;">Built for production trust</h2>
-        <p style="font-family:'Syne',sans-serif;font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;">Complete tenant isolation. API key scoping. Immutable audit logs. Every memory write is source-tagged and auditable.</p>
-        <a href="/security" style="display:inline-flex;margin-top:32px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:2px;">Security posture â</a>
+        <p style="font-family:'Syne',sans-serif;font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;">Complete tenant isolation. API key scoping. Immutable audit logs. Every memory write is source-tagged and auditable. Your data never trains our models.</p>
+        <a href="/security" style="display:inline-flex;margin-top:32px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:2px;">Security posture →</a>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
         {#each ['Tenant isolation','API key scoping','Immutable audit log','Source-tagged writes','Confidence monitoring','Guardrail enforcement'] as item}
@@ -336,10 +399,11 @@
     <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,56px);color:#0D0D0D;line-height:1.1;letter-spacing:-0.02em;max-width:640px;margin:0 auto 24px;">
       The Brain your application never had.
     </h2>
-    <p class="body-text" style="max-width:440px;margin:0 auto 40px;font-size:16px;">One API call. Persistent memory. Structured reasoning. Production-ready from day one.</p>
+    <p class="body-text" style="max-width:480px;margin:0 auto 8px;font-size:16px;">One API call. Persistent memory. Structured reasoning. Production-ready from day one.</p>
+    <p class="body-text" style="max-width:480px;margin:0 auto 40px;font-size:14px;color:rgba(13,13,13,0.4);">Start for free. The Brain starts learning from your first invocation.</p>
     <div style="display:flex;align-items:center;justify-content:center;gap:24px;">
       <a href="/signup" class="cta-primary" style="font-size:15px;padding:16px 32px;">Start for free</a>
-      <a href="/how-it-works" class="cta-secondary">Read the docs ?</a>
+      <a href="/how-it-works" class="cta-secondary">See how it works →</a>
     </div>
   </div>
 </section>
