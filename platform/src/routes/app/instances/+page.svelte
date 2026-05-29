@@ -1,6 +1,12 @@
-﻿<script lang="ts">
+<script lang="ts">
+  import OnboardingWalkthrough from '$lib/components/OnboardingWalkthrough.svelte';
+  import { browser } from '$app/environment';
   let { data } = $props()
   const instances = $derived(data.instances)
+  let showOnboarding = $state(
+    browser && !localStorage.getItem('thalium_onboarding_dismissed')
+  );
+
 
   const statusColour: Record<string, string> = {
     active:       '#1A3AFF',
@@ -76,3 +82,6 @@
 {/if}
 
 
+
+
+<OnboardingWalkthrough show={showOnboarding} onDismiss={() => showOnboarding = false} />
