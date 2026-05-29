@@ -1,7 +1,7 @@
 ﻿import { describe, expect, it, vi } from 'vitest';
-import { LibrarianError } from '../lib/librarian-error';
+import { LibrarianError } from '../lib/librarian-write';
 import { librarianWrite } from '../lib/librarian-write';
-import { type InstitutionalRingWrite } from '../schemas/institutional-ring';
+import { type InstitutionalRingWrite } from '../schemas/ring';
 
 vi.mock('../lib/supabase-client', () => ({
   supabaseClient: {
