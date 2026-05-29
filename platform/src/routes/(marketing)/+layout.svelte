@@ -9,6 +9,7 @@
     { label: 'How it works', href: '/how-it-works' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Docs', href: '/docs' },
+    { label: 'Demo', href: '/demo' },
     { label: 'Security', href: '/security' },
     { label: 'Company', href: '/company' },
   ];
