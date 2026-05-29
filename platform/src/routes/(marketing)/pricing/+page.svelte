@@ -1,6 +1,6 @@
-<svelte:head>
-  <title>Pricing — Thalium</title>
-  <meta name="description" content="Thalium pricing: start free with Spark, scale to Neuron, Lobe, Studio, or Enterprise. Persistent AI memory from £29/month." />
+﻿<svelte:head>
+  <title>Pricing â€” Thalium</title>
+  <meta name="description" content="Thalium pricing: start free with Spark, scale to Neuron, Lobe, Studio, or Enterprise. Persistent AI memory from Â£29/month." />
 </svelte:head>
 
 <style>
@@ -13,7 +13,7 @@
   <div class="content-wrap" style="text-align:center;">
     <p style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;color:rgba(13,13,13,0.3);margin-bottom:16px;">PRICING</p>
     <h1 style="font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,52px);color:#0D0D0D;line-height:1.1;letter-spacing:-0.02em;margin-bottom:16px;">Start free. Scale as you grow.</h1>
-    <p style="font-family:'Syne',sans-serif;font-size:16px;color:rgba(13,13,13,0.55);max-width:480px;margin:0 auto;">Spark is free forever. Activate a 30-day trial on any paid tier — full institutional memory, compounding intelligence, no credit card required.</p>
+    <p style="font-family:'Syne',sans-serif;font-size:16px;color:rgba(13,13,13,0.55);max-width:480px;margin:0 auto;">Spark is free forever. Activate a 30-day trial on any paid tier â€” full institutional memory, compounding intelligence, no credit card required.</p>
   </div>
 </section>
 
@@ -22,11 +22,11 @@
   <div class="content-wrap">
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid #E0DED8;">
       {#each [
-        { tier:'Spark', price:'Free', accent:'#8A8C8F', monthly:'', instances:'1', invocations:'500/mo', memory:'Session only', roles:'5 roles', support:'Community', featured:false },
-        { tier:'Neuron', price:'£29', accent:'#1A3AFF', monthly:'/month', instances:'3', invocations:'3,500/mo', memory:'Full institutional ring', roles:'All roles', support:'Email', featured:true },
-        { tier:'Lobe', price:'£199', accent:'#0D1A2E', monthly:'/month', instances:'10', invocations:'30,000/mo', memory:'Full institutional ring', roles:'All roles', support:'Priority email', featured:false },
-        { tier:'Studio', price:'£599', accent:'#0D0D0D', monthly:'/month', instances:'Unlimited', invocations:'100,000/mo', memory:'Full institutional ring', roles:'All roles + custom', support:'Dedicated', featured:false },
-        { tier:'Enterprise', price:'Custom', accent:'#0D0D0D', monthly:'', instances:'Unlimited', invocations:'Negotiated', memory:'Sovereign deployment', roles:'All roles + custom', support:'SLA-backed', featured:false },
+        { tier:'Spark', price:'Free', accent:'#8A8C8F', monthly:'', instances:'1', invocations:'500/mo', memory:'Session only', roles:'5 roles', support:'Community', featured:false, fit:'Evaluating Thalium or building a proof of concept.' },
+        { tier:'Neuron', price:'£29', accent:'#1A3AFF', monthly:'/month', instances:'3', invocations:'3,500/mo', memory:'Full institutional ring', roles:'All roles', support:'Email', featured:true, fit:'A focused internal tool or single-domain application in active use.' },
+        { tier:'Lobe', price:'£199', accent:'#0D1A2E', monthly:'/month', instances:'10', invocations:'30,000/mo', memory:'Full institutional ring', roles:'All roles', support:'Priority email', featured:false, fit:'A production SaaS feature or agency managing multiple client Brains.' },
+        { tier:'Studio', price:'£599', accent:'#0D0D0D', monthly:'/month', instances:'Unlimited', invocations:'100,000/mo', memory:'Full institutional ring', roles:'All roles + custom', support:'Dedicated', featured:false, fit:'A multi-product platform or high-volume agentic pipeline.' },
+        { tier:'Enterprise', price:'Custom', accent:'#0D0D0D', monthly:'', instances:'Unlimited', invocations:'Negotiated', memory:'Sovereign deployment', roles:'All roles + custom', support:'SLA-backed', featured:false, fit:'Regulated industries, data residency requirements, or custom SLAs.' },
       ] as tier, i}
         <div style="padding:32px 24px;border-right:{i < 4 ? '1px solid #E0DED8' : 'none'};background:{tier.featured ? '#0D0D0D' : 'white'};">
           <div style="width:8px;height:8px;border-radius:50%;background:{tier.featured ? '#6A80FF' : tier.accent};margin-bottom:20px;"></div>
@@ -54,6 +54,7 @@
               <a href="/signup" style="display:block;text-align:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:{tier.featured ? '#0D0D0D' : '#F7F5F0'};background:{tier.featured ? '#E8E4DC' : '#0D0D0D'};padding:10px;border-radius:4px;text-decoration:none;">Get started</a>
             {/if}
           </div>
+          <p style="font-family:'Syne',sans-serif;font-size:11px;color:{tier.featured ? 'rgba(255,255,255,0.35)' : 'rgba(13,13,13,0.4)'};line-height:1.5;margin-top:16px;padding-top:16px;border-top:1px solid {tier.featured ? 'rgba(255,255,255,0.08)' : '#E0DED8'};font-style:italic;">{tier.fit}</p>
         </div>
       {/each}
     </div>
@@ -70,9 +71,9 @@
         <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#1A3AFF;text-transform:uppercase;margin-bottom:16px;">How the trial works</p>
         <h3 style="font-family:'DM Serif Display',serif;font-size:24px;color:#0D0D0D;line-height:1.2;margin-bottom:20px;">Your Brain learns before you pay.</h3>
         {#each [
-          { n: '01', title: 'Sandbox (unlimited)', body: 'Sign up free. Your Brain Instance processes every invocation, accumulates memory, and trains — silently. No output returned yet, no cost.' },
+          { n: '01', title: 'Sandbox (unlimited)', body: 'Sign up free. Your Brain Instance processes every invocation, accumulates memory, and trains â€” silently. No output returned yet, no cost.' },
           { n: '02', title: 'Activate your trial (30 days)', body: 'Click Activate in the dashboard. Your Brain starts returning real intelligence immediately. It already has context from the sandbox phase.' },
-          { n: '03', title: 'Subscribe or revert', body: 'At 30 days, subscribe to keep your Brain live. If not, it reverts to sandbox — memory preserved, nothing deleted.' },
+          { n: '03', title: 'Subscribe or revert', body: 'At 30 days, subscribe to keep your Brain live. If not, it reverts to sandbox â€” memory preserved, nothing deleted.' },
         ] as step}
           <div style="display:flex;gap:16px;margin-bottom:20px;">
             <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.25);min-width:24px;padding-top:3px;">{step.n}</span>
@@ -82,27 +83,27 @@
             </div>
           </div>
         {/each}
-        <a href="/signup" style="display:inline-block;margin-top:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#F7F5F0;background:#0D0D0D;padding:12px 24px;border-radius:4px;text-decoration:none;">Start free — activate your trial</a>
+        <a href="/signup" style="display:inline-block;margin-top:8px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#F7F5F0;background:#0D0D0D;padding:12px 24px;border-radius:4px;text-decoration:none;">Start free â€” activate your trial</a>
       </div>
 
       <div>
         <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;color:rgba(13,13,13,0.3);text-transform:uppercase;margin-bottom:16px;">Usage guidance</p>
         <h3 style="font-family:'DM Serif Display',serif;font-size:24px;color:#0D0D0D;line-height:1.2;margin-bottom:24px;">How many invocations do I need?</h3>
         {#each [
-          { tier: 'Neuron', price: '£29/mo', inv: '3,500', daily: '~115/day', examples: 'A focused internal tool for one team. A single-domain support bot. A prototype in active development.' },
-          { tier: 'Lobe', price: '£199/mo', inv: '30,000', daily: '~1,000/day', examples: 'A production SaaS feature serving hundreds of users. An agency managing 5–10 client Brain Instances.' },
-          { tier: 'Studio', price: '£599/mo', inv: '100,000', daily: '~3,300/day', examples: 'A multi-product platform. A compliance tool processing hundreds of documents daily. High-volume agentic pipelines.' },
+          { tier: 'Neuron', price: 'Â£29/mo', inv: '3,500', daily: '~115/day', examples: 'A focused internal tool for one team. A single-domain support bot. A prototype in active development.' },
+          { tier: 'Lobe', price: 'Â£199/mo', inv: '30,000', daily: '~1,000/day', examples: 'A production SaaS feature serving hundreds of users. An agency managing 5â€“10 client Brain Instances.' },
+          { tier: 'Studio', price: 'Â£599/mo', inv: '100,000', daily: '~3,300/day', examples: 'A multi-product platform. A compliance tool processing hundreds of documents daily. High-volume agentic pipelines.' },
         ] as row}
           <div style="padding:20px 0;border-bottom:1px solid #E0DED8;">
             <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;">
               <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#0D0D0D;">{row.tier}</span>
-              <span style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(13,13,13,0.4);">{row.inv} invocations — {row.daily}</span>
+              <span style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(13,13,13,0.4);">{row.inv} invocations â€” {row.daily}</span>
             </div>
             <p style="font-family:'Syne',sans-serif;font-size:13px;color:rgba(13,13,13,0.55);line-height:1.6;">{row.examples}</p>
           </div>
         {/each}
         <div style="padding:20px 0;">
-          <p style="font-family:'Syne',sans-serif;font-size:13px;color:rgba(13,13,13,0.45);line-height:1.7;">Need more? Overage invocations are billed at cost + a 30% coordination margin. Enable overage in your dashboard — you set the cap. Unused invocations do not roll over.</p>
+          <p style="font-family:'Syne',sans-serif;font-size:13px;color:rgba(13,13,13,0.45);line-height:1.7;">Need more? Overage invocations are billed at cost + a 30% coordination margin. Enable overage in your dashboard â€” you set the cap. Unused invocations do not roll over.</p>
         </div>
       </div>
 
@@ -120,12 +121,12 @@
       <div>
         {#each [
           { q: 'What counts as an invocation?', a: 'One invocation is one call to the /v1/brain/{id}/invoke endpoint. The full role chain runs regardless of which roles are active for that intent type.' },
-          { q: 'What happens when I hit my invocation limit?', a: 'On Spark, invocations are hard-capped. On paid tiers, you can enable overage billing — additional invocations at a per-invocation rate. You\'ll receive a notification at 80% of your allocation.' },
+          { q: 'What happens when I hit my invocation limit?', a: 'On Spark, invocations are hard-capped. On paid tiers, you can enable overage billing â€” additional invocations at a per-invocation rate. You\'ll receive a notification at 80% of your allocation.' },
           { q: 'Can I change tiers mid-billing period?', a: 'Yes. Upgrades are effective immediately and prorated. Downgrades take effect at the end of the current billing period.' },
-          { q: 'What is the difference between session memory and the institutional ring?', a: 'Session memory resets at the end of each session. The institutional ring is permanent — it persists and compounds across all invocations, indefinitely. Spark only has session memory.' },
+          { q: 'What is the difference between session memory and the institutional ring?', a: 'Session memory resets at the end of each session. The institutional ring is permanent â€” it persists and compounds across all invocations, indefinitely. Spark only has session memory.' },
           { q: 'Can I cancel at any time?', a: 'Yes. Cancel from your billing dashboard at any time. Your subscription remains active until the end of the paid period.' },
           { q: 'Is there a free trial of paid features?', a: 'Spark includes an optional 30-day live trial that activates full institutional memory. No credit card required to start.' },
-          { q: 'What currency is billing in?', a: 'All prices are in GBP (£). Enterprise agreements can be denominated in USD or EUR on request.' },
+          { q: 'What currency is billing in?', a: 'All prices are in GBP (Â£). Enterprise agreements can be denominated in USD or EUR on request.' },
         ] as faq, i}
           <div style="padding:24px 0;border-bottom:{i < 6 ? '1px solid #E0DED8' : 'none'};">
             <h4 style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#0D0D0D;margin-bottom:8px;">{faq.q}</h4>

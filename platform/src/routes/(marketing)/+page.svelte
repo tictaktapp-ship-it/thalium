@@ -115,9 +115,9 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
       <div>
         <p class="section-label" style="margin-bottom:24px;">Brain-as-a-Service</p>
-        <h1 class="hero-headline">The relay that <em>remembers.</em></h1>
-        <p class="body-text" style="margin-top:20px;max-width:440px;font-size:15px;color:rgba(13,13,13,0.45);font-style:italic;">
-          Your application calls a model. Gets an answer. Forgets everything. Every time.
+        <h1 class="hero-headline">Your application should get smarter with every call.<em> It doesn't.</em></h1>
+        <p class="body-text" style="margin-top:20px;max-width:440px;font-size:15px;color:rgba(13,13,13,0.4);font-style:italic;">
+          The relay that remembers.
         </p>
         <p class="body-text" style="margin-top:16px;max-width:440px;font-size:18px;">
           Stop rebuilding state management, orchestration, and audit infrastructure. One API call gives your application persistent memory, structured reasoning, and governance — permanently.
@@ -308,8 +308,50 @@
   </div>
 </section>
 
-<!-- Capabilities -->
+<!-- Objection handling -->
 <section class="section" style="background:#F7F5F0;border-top:1px solid #E0DED8;border-bottom:1px solid #E0DED8;">
+  <div class="content-wrap">
+    <div style="text-align:center;margin-bottom:64px;">
+      <p class="section-label">How Thalium is different</p>
+      <h2 class="section-heading">Not a wrapper. Not a vector database. Not a DIY project.</h2>
+      <p class="body-text" style="max-width:540px;margin:16px auto 0;">The question every technical buyer asks before they commit. Here are the honest answers.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#E0DED8;">
+      {#each [
+        {
+          label: 'vs RAG / vector databases',
+          headline: 'RAG retrieves by similarity. Thalium retrieves by address.',
+          body: 'Every RAG system you have evaluated finds context that is semantically close — probabilistically useful, occasionally wrong. Thalium files every memory entry at a deterministic address derived from classification. If it is there, it is the right thing. There is no drift, no hallucinated context, no retrieved-but-irrelevant. The Coverage Map tells the Brain exactly what it knows and what it does not — so it never routes silently to an empty region.',
+          verdict: 'Use a vector database for search. Use Thalium for structured, address-keyed institutional memory that compounds with every invocation.'
+        },
+        {
+          label: 'vs building it yourself',
+          headline: 'You can build this. The question is whether you should.',
+          body: 'State management, intent classification, confidence gating, structured reasoning chains, ring-based memory with versioning, immutable audit trails, Coverage Map tracking, self-improving scoring rules — each is a tractable engineering problem. Together they are a multi-month platform build entirely outside your core product. Every week spent building cognitive infrastructure is a week not spent on the thing your customers pay for.',
+          verdict: 'Build your application logic. Call Thalium for the cognitive infrastructure. One API call replaces months of foundational engineering.'
+        },
+        {
+          label: 'vs raw LLM APIs',
+          headline: 'A raw model call is stateless compute. Thalium is a Brain.',
+          body: 'Calling OpenAI or Anthropic directly gives you powerful generation with no memory, no classification, no confidence gating, no audit trail, and no compounding value over time. Every invocation starts cold. The model does not know your domain, your prior decisions, or your standards. Thalium wraps that compute in a full cognitive chain — classifying intent, retrieving memory, structuring output, gating on confidence, and writing results back permanently.',
+          verdict: 'Raw LLM APIs are the engine. Thalium is the vehicle. One gives you tokens — the other gives you intelligence that gets better every time you use it.'
+        },
+      ] as obj}
+        <div class="pillar-card">
+          <p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#1A3AFF;margin-bottom:16px;">{obj.label}</p>
+          <h3 style="font-family:'DM Serif Display',serif;font-size:20px;color:#0D0D0D;line-height:1.25;margin-bottom:16px;">{obj.headline}</h3>
+          <p class="body-text" style="font-size:14px;margin-bottom:20px;">{obj.body}</p>
+          <div style="padding-top:16px;border-top:1px solid #E0DED8;">
+            <p style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#0D0D0D;line-height:1.6;">{obj.verdict}</p>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+</section>
+
+<!-- Capabilities -->
+<section class="section" style="background:white;border-top:1px solid #E0DED8;border-bottom:1px solid #E0DED8;">
   <div class="content-wrap">
     <div style="display:grid;grid-template-columns:1fr 2fr;gap:80px;">
       <div style="position:sticky;top:100px;align-self:start;">
@@ -349,18 +391,19 @@
     </div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#E0DED8;">
       {#each [
-        { tier:'Spark', price:'Free', accent:'#8A8C8F', desc:'1 Brain Instance', sub:'500 invocations/mo' },
-        { tier:'Neuron', price:'£29/mo', accent:'#1A3AFF', desc:'3 Brain Instances', sub:'3,500 invocations/mo' },
-        { tier:'Lobe', price:'£199/mo', accent:'#0D1A2E', desc:'10 Brain Instances', sub:'30,000 invocations/mo' },
-        { tier:'Studio', price:'£599/mo', accent:'#0D0D0D', desc:'Unlimited Instances', sub:'100,000 invocations/mo' },
-        { tier:'Enterprise', price:'Custom', accent:'#0D0D0D', desc:'Sovereign deployment', sub:'Negotiated limits' },
+        { tier:'Spark', price:'Free', accent:'#8A8C8F', desc:'1 Brain Instance', sub:'500 invocations/mo', fit:'Evaluating Thalium or building a proof of concept.' },
+        { tier:'Neuron', price:'£29/mo', accent:'#1A3AFF', desc:'3 Brain Instances', sub:'3,500 invocations/mo', fit:'A focused internal tool or single-domain application in active use.' },
+        { tier:'Lobe', price:'£199/mo', accent:'#0D1A2E', desc:'10 Brain Instances', sub:'30,000 invocations/mo', fit:'A production SaaS feature or agency managing multiple client Brains.' },
+        { tier:'Studio', price:'£599/mo', accent:'#0D0D0D', desc:'Unlimited Instances', sub:'100,000 invocations/mo', fit:'A multi-product platform or high-volume agentic pipeline.' },
+        { tier:'Enterprise', price:'Custom', accent:'#0D0D0D', desc:'Sovereign deployment', sub:'Negotiated limits', fit:'Regulated industries, data residency requirements, or custom SLAs.' },
       ] as tier}
         <div style="background:white;padding:32px 24px;">
           <div style="width:8px;height:8px;border-radius:50%;background:{tier.accent};margin-bottom:16px;"></div>
           <p style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#0D0D0D;margin-bottom:4px;">{tier.tier}</p>
-          <p style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#0D0D0D;margin-bottom:16px;">{tier.price}</p>
+          <p style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#0D0D0D;margin-bottom:12px;">{tier.price}</p>
           <p style="font-family:'Syne',sans-serif;font-size:12px;color:rgba(13,13,13,0.5);margin-bottom:4px;">{tier.desc}</p>
-          <p style="font-family:'Syne',sans-serif;font-size:12px;color:rgba(13,13,13,0.35);">{tier.sub}</p>
+          <p style="font-family:'Syne',sans-serif;font-size:12px;color:rgba(13,13,13,0.35);margin-bottom:16px;">{tier.sub}</p>
+          <p style="font-family:'Syne',sans-serif;font-size:11px;color:rgba(13,13,13,0.45);line-height:1.5;padding-top:12px;border-top:1px solid #E0DED8;font-style:italic;">{tier.fit}</p>
         </div>
       {/each}
     </div>
