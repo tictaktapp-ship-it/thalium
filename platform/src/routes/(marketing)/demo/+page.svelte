@@ -100,6 +100,7 @@
   let events: {type: string, data: unknown}[] = $state([]);
   let fastArtifact: unknown = $state(null);
   let fullArtifact: unknown = $state(null);
+  let partialResult: unknown = $state(null);
   let roleProgress: string[] = $state([]);
   let error = $state("");
   let showComparison = $state(false);
@@ -119,6 +120,7 @@
     events = [];
     fastArtifact = null;
     fullArtifact = null;
+    partialResult = null;
     roleProgress = [];
     error = "";
     showComparison = false;
@@ -157,6 +159,7 @@
           try { parsed = JSON.parse(evtData); } catch { parsed = evtData; }
           events = [...events, { type: evtType, data: parsed }];
           if (evtType === "fast.artifact") fastArtifact = parsed;
+          if (evtType === "chain.partial") { partialResult = parsed; running = false; }
           if (evtType === "full.artifact") { fullArtifact = (parsed as any)?.artifact ?? parsed; showComparison = true; }
           if (evtType.startsWith("full.") && !["full.artifact"].includes(evtType)) {
             const role = evtType.replace("full.", "");
@@ -271,7 +274,16 @@
         {/if}
 
         <!-- Fast artifact -->
-        {#if fastArtifact && !fullArtifact}
+        {#if partialResult && !fullArtifact}
+            <div style="margin-bottom:24px;padding:20px;background:#FFF7ED;border:1px solid #D97706;border-radius:4px;">
+              <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#D97706;margin-bottom:8px;">CHAIN PAUSED — INTERROGATOR ACTIVE</p>
+              <p style="font-family:'DM Mono',monospace;font-size:12px;color:#0D0D0D;margin-bottom:12px;">The Brain needs clarification before proceeding. In production, these questions are returned to the caller to resolve:</p>
+              {#each ((partialResult as any)?.questions ?? []) as q}
+                <p style="font-family:'DM Mono',monospace;font-size:11px;color:#0D0D0D;padding:6px 10px;background:white;border:1px solid #E0DED8;border-radius:3px;margin-bottom:6px;">• {q}</p>
+              {/each}
+            </div>
+          {/if}
+          {#if fastArtifact && !fullArtifact}
           <div style="margin-bottom:24px;padding:20px;background:#EEF1FF;border:1px solid #1A3AFF;border-radius:4px;">
             <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#1A3AFF;margin-bottom:8px;">FAST ARTIFACT — initial result</p>
             <div style="display:flex;gap:24px;">
