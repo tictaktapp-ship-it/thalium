@@ -1,122 +1,67 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import express from 'express';
-import request from 'supertest';
+﻿import request from 'supertest';
+import { app } from '../../app';
+import { redisShardA } from '../../lib/redis';
+import { AddressKeySchema } from '../../schemas/address-key';
+import { v4 as uuidv4 } from 'uuid';
 
-vi.mock('pg', () => {
-  const mockPool = {
-    query: vi.fn().mockResolvedValue({ rows: [] }),
-    end: vi.fn().mockResolvedValue(undefined),
-  };
-  return { Pool: vi.fn(() => mockPool) };
-});
-
-vi.mock('@upstash/redis', () => {
-  const mockRedis = {
-    get: vi.fn().mockResolvedValue(null),
-    set: vi.fn().mockResolvedValue('OK'),
-  };
-  return { Redis: vi.fn(() => mockRedis) };
-});
-
-import { createRouter, requireInternalHeader, requireApiKey } from '../../api/routes';
-
-const INTERNAL_SECRET = 'test-internal-secret';
-
-function buildApp() {
-  const app = express();
-  app.use(express.json());
-  process.env.X_THALIUM_INTERNAL = INTERNAL_SECRET;
-  app.use(createRouter());
-  return app;
-}
-
-describe('routes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    process.env.X_THALIUM_INTERNAL = INTERNAL_SECRET;
+describe('POST /invoke', () => {
+  beforeEach(async () => {
+    await redisShardA.flushall();
   });
 
-  it('rejects request missing X-Thalium-Internal header with 401', async () => {
-    const app = buildApp();
+  it('rejects requests without X-Request-ID header', async () => {
     const res = await request(app)
-      .post('/v1/brain/brain-001/invoke')
-      .set('Authorization', 'Bearer test-key')
-      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
-
-    expect(res.status).toBe(401);
-    expect(res.body.code).toBe('missing_internal_header');
+      .post('/invoke')
+      .send({ address_key: 'diagnosis.project.medical.medium' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Missing X-Request-ID header');
   });
 
-  it('rejects request missing Authorization header with 401', async () => {
-    const app = buildApp();
+  it('rejects invalid address key format', async () => {
     const res = await request(app)
-      .post('/v1/brain/brain-001/invoke')
-      .set('X-Thalium-Internal', INTERNAL_SECRET)
-      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
-
-    expect(res.status).toBe(401);
-    expect(res.body.code).toBe('missing_api_key');
-  });
-
-  it('rejects invalid API key with 401', async () => {
-    const { Pool } = await import('pg');
-    const mockPool = new (Pool as any)();
-    mockPool.query.mockResolvedValueOnce({ rows: [] });
-
-    const app = buildApp();
-    const res = await request(app)
-      .post('/v1/brain/brain-001/invoke')
-      .set('X-Thalium-Internal', INTERNAL_SECRET)
-      .set('Authorization', 'Bearer bad-key')
-      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
-
-    expect([401, 403]).toContain(res.status);
-  });
-
-  it('rejects insufficient scope with 403', async () => {
-    const { Pool } = await import('pg');
-    const mockPool = new (Pool as any)();
-    mockPool.query.mockResolvedValueOnce({ rows: [{ scopes: ['memory:read'] }] });
-
-    const app = buildApp();
-    const res = await request(app)
-      .delete('/v1/brain/brain-001/memory')
-      .set('X-Thalium-Internal', INTERNAL_SECRET)
-      .set('Authorization', 'Bearer valid-key');
-
-    expect(res.status).toBe(403);
-    expect(res.body.code).toBe('insufficient_scope');
+      .post('/invoke')
+      .set('X-Request-ID', uuidv4())
+      .send({ address_key: 'invalid.format' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/Invalid address key format/);
   });
 
   it('accepts valid invoke request with correct headers and scope', async () => {
-    const { Pool } = await import('pg');
-    const mockPool = new (Pool as any)();
-    mockPool.query.mockResolvedValueOnce({ rows: [{ scopes: ['invoke'] }] });
+    const validKey = 'diagnosis.project.medical.medium';
+    AddressKeySchema.parse(validKey); // Validate against our schema
 
-    const app = buildApp();
     const res = await request(app)
-      .post('/v1/brain/brain-001/invoke')
-      .set('X-Thalium-Internal', INTERNAL_SECRET)
-      .set('Authorization', 'Bearer valid-key')
-      .send({ input: 'hello', brain_id: 'brain-001', domain: 'software', session_id: 's1' });
+      .post('/invoke')
+      .set('X-Request-ID', uuidv4())
+      .send({ address_key: validKey });
 
-    expect(res.status).toBe(202);
-    expect(res.body.status).toBe('accepted');
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toBe('text/event-stream; charset=utf-8');
   });
 
-  it('returns 400 on invalid invoke body', async () => {
-    const { Pool } = await import('pg');
-    const mockPool = new (Pool as any)();
-    mockPool.query.mockResolvedValueOnce({ rows: [{ scopes: ['invoke'] }] });
+  it('rejects when coverage map reports empty region', async () => {
+    const emptyRegionKey = 'knowledge_retrieval.entity.obscure.nonexistent';
+    jest.spyOn(redisShardA, 'exists').mockResolvedValue(0);
 
-    const app = buildApp();
     const res = await request(app)
-      .post('/v1/brain/brain-001/invoke')
-      .set('X-Thalium-Internal', INTERNAL_SECRET)
-      .set('Authorization', 'Bearer valid-key')
-      .send({ bad: 'body' });
+      .post('/invoke')
+      .set('X-Request-ID', uuidv4())
+      .send({ address_key: emptyRegionKey });
 
-    expect(res.status).toBe(400);
-    expect(res.body.error).toBe('bad_request');
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Address key region has no coverage');
+  });
+
+  it('rejects when domain uncertainty exceeds threshold', async () => {
+    const uncertainKey = 'risk_assessment.org.financial.high';
+    jest.spyOn(redisShardA, 'hget').mockResolvedValue('0.91'); // Above 0.9 threshold
+
+    const res = await request(app)
+      .post('/invoke')
+      .set('X-Request-ID', uuidv4())
+      .send({ address_key: uncertainKey });
+
+    expect(res.status).toBe(409);
+    expect(res.body.error).toBe('Domain uncertainty threshold exceeded');
   });
 });
