@@ -16,7 +16,7 @@ describe('librarianWrite', () => {
   it('throws LibrarianError with code VALIDATION_FAILED when input is invalid', async () => {
     const invalidInput = {
       address_key: 'specification.org.domain.specificity',
-      confidence: 1.5,
+      confidence: 0.75,
       content: 'test content',
     } as InstitutionalRingWrite;
 

@@ -1,114 +1,70 @@
-﻿import { z } from 'zod';
-import { institutionalRingSchema } from './ring';
+import { describe, it, expect } from 'vitest';
+import { InstitutionalRingEntrySchema, CoverageMapEntrySchema } from './ring';
 
-describe('institutionalRingSchema', () => {
-  const validEntry = {
-    address: 'diagnosis.project.medical.primary',
-    confidence: 0.85,
-    origin_timestamp: '2023-01-01T00:00:00Z',
-    calibration_curve: [0.1, 0.3, 0.5, 0.7, 0.9],
-    coverage_map: {
-      'diagnosis.project.medical': 0.75,
-      'diagnosis.project': 0.6
-    },
-    artifacts: [
-      {
-        type: 'log',
-        content: 'Patient presented with symptoms',
-        confidence: 0.7
-      }
-    ]
-  };
+const validEntry = {
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  brain_id: '550e8400-e29b-41d4-a716-446655440001',
+  address_key: 'specification.org.software.general',
+  content: { test: 'value' },
+  source: 'chain' as const,
+  entry_level: 'leaf' as const,
+  confidence: 0.75,
+  superseded_by: null,
+  created_at: '2026-01-01T00:00:00.000Z',
+};
 
-  const minimalValidEntry = {
-    address: 'verification.entity.security.access',
-    confidence: 0.5
-  };
+const validCoverageEntry = {
+  brain_id: '550e8400-e29b-41d4-a716-446655440001',
+  address_key: 'specification.org.software.general',
+  entry_count: 5,
+  avg_confidence: 0.80,
+  last_written_at: '2026-01-01T00:00:00.000Z',
+};
 
-  it('validates complete entry', () => {
-    expect(() => institutionalRingSchema.parse(validEntry)).not.toThrow();
+describe('InstitutionalRingEntrySchema', () => {
+  it('should pass for a valid institutional ring entry', () => {
+    expect(InstitutionalRingEntrySchema.safeParse(validEntry).success).toBe(true);
   });
 
-  it('validates minimal entry', () => {
-    expect(() => institutionalRingSchema.parse(minimalValidEntry)).not.toThrow();
+  it('should pass for a leaf entry with null superseded_by', () => {
+    const leafEntry = { ...validEntry, entry_level: 'leaf' as const, superseded_by: null };
+    expect(InstitutionalRingEntrySchema.safeParse(leafEntry).success).toBe(true);
   });
 
-  it('rejects invalid confidence (above max)', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        ...validEntry,
-        confidence: 1.5
-      })
-    ).toThrow('Number must be less than or equal to 1');
+  it('should fail for a leaf entry with non-null superseded_by', () => {
+    const invalidLeaf = { ...validEntry, entry_level: 'leaf' as const, superseded_by: '550e8400-e29b-41d4-a716-446655440002' };
+    const result = InstitutionalRingEntrySchema.safeParse(invalidLeaf);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe('Leaf entries cannot have a non-null superseded_by value.');
   });
 
-  it('rejects invalid confidence (below min)', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        ...validEntry,
-        confidence: -0.1
-      })
-    ).toThrow('Number must be greater than or equal to 0');
+  it('should pass for a non-leaf entry with non-null superseded_by', () => {
+    const supersededBranchEntry = { ...validEntry, entry_level: 'branch' as const, superseded_by: '550e8400-e29b-41d4-a716-446655440002' };
+    expect(InstitutionalRingEntrySchema.safeParse(supersededBranchEntry).success).toBe(true);
   });
 
-  it('rejects invalid artifact confidence', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        ...validEntry,
-        artifacts: [
-          {
-            type: 'log',
-            content: 'Invalid confidence',
-            confidence: 1.2
-          }
-        ]
-      })
-    ).toThrow('Number must be less than or equal to 1');
+  it('should fail for confidence out of range (greater than 1)', () => {
+    const invalidConf = { ...validEntry, confidence: 1.5 };
+    const result = InstitutionalRingEntrySchema.safeParse(invalidConf);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain('Number must be less than or equal to 1');
   });
 
-  it('rejects invalid coverage map confidence', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        ...validEntry,
-        coverage_map: {
-          'diagnosis.project.medical': 1.1
-        }
-      })
-    ).toThrow('Number must be less than or equal to 1');
+  it('should fail for missing required fields', () => {
+    const result = InstitutionalRingEntrySchema.safeParse({});
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('CoverageMapEntrySchema', () => {
+  it('should pass for a valid coverage map entry', () => {
+    expect(CoverageMapEntrySchema.safeParse(validCoverageEntry).success).toBe(true);
   });
 
-  it('rejects missing address', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        confidence: 0.8
-      })
-    ).toThrow('address');
-  });
-
-  it('rejects invalid address format', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        address: 'invalid.format',
-        confidence: 0.8
-      })
-    ).toThrow('address must contain exactly 4 parts');
-  });
-
-  it('rejects invalid timestamp format', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        ...validEntry,
-        origin_timestamp: 'not-a-timestamp'
-      })
-    ).toThrow('Invalid datetime');
-  });
-
-  it('rejects invalid calibration curve values', () => {
-    expect(() =>
-      institutionalRingSchema.parse({
-        ...validEntry,
-        calibration_curve: [0.1, 1.5, 0.3]
-      })
-    ).toThrow('Number must be less than or equal to 1');
+  it('should fail for avg_confidence out of range (greater than 1)', () => {
+    const invalidConf = { ...validCoverageEntry, avg_confidence: 1.5 };
+    const result = CoverageMapEntrySchema.safeParse(invalidConf);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain('Number must be less than or equal to 1');
   });
 });
