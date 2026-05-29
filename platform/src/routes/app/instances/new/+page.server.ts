@@ -62,6 +62,19 @@ export const actions = {
     const instances = await res.json()
     const brainId = instances[0]?.id
 
+    // Create database partition for new Brain Instance (required for partitioned tables)
+    if (brainId) {
+      try {
+        await fetch(`${base}/rest/v1/rpc/create_brain_partition`, {
+          method: 'POST',
+          headers: { ...headers, Prefer: '' },
+          body: JSON.stringify({ p_brain_id: brainId })
+        });
+      } catch (err) {
+        console.error('[new-instance] Partition creation failed:', err);
+      }
+    }
+
     // Trigger seeding via backend — fire and forget, never block redirect on failure
     if (brainId && THALIUM_API_URL && THALIUM_INTERNAL_SECRET) {
       fetch(`${THALIUM_API_URL}/v1/brain/${brainId}/seed`, {
