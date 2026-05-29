@@ -61,7 +61,7 @@
             Thalium is operated by <strong style="color:#0D0D0D;font-weight:700;">Curavest Ltd</strong>, registered in England and Wales.<br><br>
             Company registration number: 15433116<br>
             VAT number: 460 3289 00<br><br>
-            Registered office: England and Wales, United Kingdom.
+            Registered office: 334 Reading Road, Winnersh, Wokingham, England, RG41 5EJ
           </p>
           <div style="margin-top:24px;display:flex;gap:16px;">
             <a href="/terms" style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:rgba(13,13,13,0.5);text-decoration:none;">Terms of Service</a>
