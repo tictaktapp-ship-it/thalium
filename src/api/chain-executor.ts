@@ -1,4 +1,4 @@
-import { runChain, ChainInput } from '../chain/coordinator';
+﻿import { runChain, ChainInput } from '../chain/coordinator';
 import { createSSEResponse } from '../sse/emitter';
 import { LibrarianError } from '../lib/librarian-write';
 import { randomUUID } from 'crypto';
@@ -21,6 +21,7 @@ const InvocationRequestSchema = z.object({
   brain_id: z.string().min(1),
   domain: z.string().min(1),
   session_id: z.string().optional(),
+  suppress_interrogator: z.boolean().optional(),
 });
 
 export function validateInvocationRequest(body: unknown): InvocationRequest {
@@ -63,6 +64,7 @@ export async function handleChainInvocation(
       brainId: request.brain_id,
       domain: request.domain,
       sessionId,
+      suppressInterrogator: (result?.data as any)?.suppress_interrogator ?? false,
     };
 
     try {

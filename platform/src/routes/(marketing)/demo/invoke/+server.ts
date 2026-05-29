@@ -19,6 +19,7 @@ export const POST: RequestHandler = async ({ request }) => {
       brain_id: DEMO_BRAIN_ID,
       domain,
       input,
+      suppress_interrogator: true,
     }),
   });
 

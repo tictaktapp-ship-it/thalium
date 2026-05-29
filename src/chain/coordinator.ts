@@ -1,4 +1,4 @@
-import { triage } from '../roles/triage';
+﻿import { triage } from '../roles/triage';
 import { listen } from '../roles/listener';
 import { interrogate } from '../roles/interrogator';
 import { architect } from '../roles/architect';
@@ -17,6 +17,7 @@ export interface ChainInput {
   brainId: string;
   domain: string;
   sessionId: string;
+  suppressInterrogator?: boolean;
 }
 
 export interface SSEEmitter {
@@ -24,7 +25,7 @@ export interface SSEEmitter {
 }
 
 export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Promise<void> {
-  const { input, brainId, domain, sessionId } = chainInput;
+  const { input, brainId, domain, sessionId, suppressInterrogator = false } = chainInput;
   const startedAt = new Date();
   let addressKey = 'intent_clarification.org.general.general';
   let attemptCount = 0;
@@ -45,7 +46,7 @@ export async function runChain(chainInput: ChainInput, emitter: SSEEmitter): Pro
 
         const interrogatorResult = await interrogate(sessionId, input, listenerResult.intent_object.prediction_error_score, addressKey);
         emitter.emit('full.interrogator', interrogatorResult);
-        if (interrogatorResult.activated) {
+        if (interrogatorResult.activated && !suppressInterrogator) {
           emitter.emit('chain.partial', interrogatorResult);
           partialArtifact = interrogatorResult;
           break;
