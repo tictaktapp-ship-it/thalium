@@ -1,4 +1,4 @@
-﻿import { librarianWrite } from './librarian-write';
+import { librarianWrite } from './librarian-write';
 
 const INTENT_TYPES = [
   'specification',
@@ -10,8 +10,7 @@ const INTENT_TYPES = [
   'planning',
   'knowledge_retrieval',
   'compliance_check',
-  'knowledge_ingestion',
-  'intent_clarification'
+  'knowledge_ingestion'
 ] as const;
 
 const SCOPES = ['org', 'project', 'entity'] as const;
@@ -28,7 +27,7 @@ function log(level: 'info' | 'error', message: string, context: Record<string, u
 }
 
 /**
- * Seeds a new Brain Instance with 33 branch-level baseline entries (11 intent types × 3 scopes).
+ * Seeds a new Brain Instance with 30 leaf-level baseline entries (10 intent types × 3 scopes).
  * All writes go via librarianWrite (P7 compliance). Never throws — logs failures and continues.
  */
 export async function seedBrainInstance(brainId: string, domain: string): Promise<SeedResult> {
@@ -58,8 +57,8 @@ export async function seedBrainInstance(brainId: string, domain: string): Promis
             note: 'Baseline seed entry — Calibrator will refine confidence and subdivide specificity as invocations accumulate.'
           },
           source: 'seeding',
-          entry_level: 'branch',
-          confidence: 0.50
+          entry_level: 'leaf',
+          confidence: 0.75
         });
         result.written++;
       } catch (error) {

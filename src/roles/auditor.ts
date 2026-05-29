@@ -61,17 +61,20 @@ export async function audit(
         'Authorization': `Bearer ${supabaseKey}`
       },
       body: JSON.stringify({
-        session_id: auditEntry.session_id,
         brain_id: auditEntry.brain_id,
-        event_type: auditEntry.event_type,
-        payload: {
+        actor_type: 'chain',
+        actor_id: auditEntry.session_id,
+        action: auditEntry.event_type,
+        target_type: 'brain_instance',
+        target_id: auditEntry.brain_id,
+        metadata: {
           address_key: auditEntry.address_key,
           roles_activated: auditEntry.roles_activated,
           gate_decision: auditEntry.gate_decision,
           confidence_score: auditEntry.confidence_score,
-          duration_ms: auditEntry.duration_ms,
-          ...auditEntry.payload
-        }
+          duration_ms: auditEntry.duration_ms
+        },
+        occurred_at: new Date().toISOString()
       })
     });
 
