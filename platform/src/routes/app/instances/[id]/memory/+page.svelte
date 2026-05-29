@@ -14,6 +14,7 @@
   }>();
 
   let expandedEntryId: string | null = $state(null);
+  let activeTab = $state('browser');
 
   const statusOptions = [
     { value: 'all', label: 'All' },
@@ -121,20 +122,17 @@
   <!-- Right Panel - Ring Entries -->
   <div class="flex-1 overflow-y-auto p-4">
     <div class="flex items-center gap-4 mb-4">
-      <a
-        href={`/app/instances/${data.instance.id}/memory/browser`}
-        class="font-bold text-ink border-b-2 border-signal pb-1"
-      >
-        Ring browser
-      </a>
-      <a
-        href={`/app/instances/${data.instance.id}/memory/health`}
-        class="text-ink/50 hover:text-ink pb-1"
-      >
-        Memory health
-      </a>
+      <button
+        class={`font-syne font-bold text-sm pb-1 border-b-2 ${activeTab === 'browser' ? 'text-ink border-signal' : 'text-ink/40 border-transparent hover:text-ink'}`}
+        onclick={() => activeTab = 'browser'}
+      >Ring browser</button>
+      <button
+        class={`font-syne font-bold text-sm pb-1 border-b-2 ${activeTab === 'health' ? 'text-ink border-signal' : 'text-ink/40 border-transparent hover:text-ink'}`}
+        onclick={() => activeTab = 'health'}
+      >Memory health</button>
     </div>
 
+    {#if activeTab === 'browser'}
     <div class="flex items-center gap-4 mb-4">
       <div class="flex items-center gap-1 bg-ink/5 rounded p-0.5">
         {#each statusOptions as option}
@@ -240,3 +238,53 @@
     </div>
   </div>
 </div>
+    {:else}
+    <div class="space-y-6 pt-2">
+      <div>
+        <h3 class="font-syne font-bold text-base text-ink mb-1">Confidence overview</h3>
+        <p class="font-mono text-xs text-ink/40 mb-4">Average confidence across all address key regions.</p>
+        <div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+          {#each data.coverageMap as item}
+            <div class="border border-rule rounded p-3">
+              <p class="font-mono text-xs text-ink/40 mb-1 truncate">{item.address_key.split('.')[0]}.{item.address_key.split('.')[1]}</p>
+              <p class="font-syne font-bold text-xl text-ink">{Math.round(Number(item.avg_confidence) * 100)}%</p>
+              <div class="mt-2 h-1 rounded bg-rule">
+                <div class="h-1 rounded bg-signal" style="width:{Math.round(Number(item.avg_confidence) * 100)}%"></div>
+              </div>
+              <p class="font-mono text-xs text-ink/30 mt-1">{item.entry_count} {item.entry_count === 1 ? 'entry' : 'entries'}</p>
+            </div>
+          {/each}
+        </div>
+      </div>
+      <div>
+        <h3 class="font-syne font-bold text-base text-ink mb-1">Coverage density</h3>
+        <p class="font-mono text-xs text-ink/40 mb-4">Entry count per region — rich coverage improves artifact quality.</p>
+        <div class="border border-rule rounded overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-ink/5"><tr>
+              <th class="p-2 font-mono text-xs text-ink/50">Address key</th>
+              <th class="p-2 font-mono text-xs text-ink/50">Entries</th>
+              <th class="p-2 font-mono text-xs text-ink/50">Avg confidence</th>
+              <th class="p-2 font-mono text-xs text-ink/50">Density</th>
+            </tr></thead>
+            <tbody>
+              {#each data.coverageMap as item}
+                <tr class="border-t border-rule">
+                  <td class="p-2 font-mono text-xs text-signal">{item.address_key}</td>
+                  <td class="p-2 font-mono text-xs">{item.entry_count}</td>
+                  <td class="p-2 font-mono text-xs">{Math.round(Number(item.avg_confidence) * 100)}%</td>
+                  <td class="p-2"><span class="font-mono text-xs px-1.5 py-0.5 rounded" style={item.entry_count > 20 ? 'background:#EEF1FF;color:#1A3AFF' : item.entry_count >= 5 ? 'background:#FEF3C7;color:#D97706' : 'background:#F7F5F0;color:rgba(13,13,13,0.4)'}>{item.entry_count > 20 ? 'Rich' : item.entry_count >= 5 ? 'Sparse' : item.entry_count >= 1 ? 'Thin' : 'Empty'}</span></td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {#if data.coverageMap.every(item => Number(item.entry_count) < 5)}
+        <div class="rounded p-4" style="background:#FFFBEB;border:1px solid #FDE68A">
+          <p class="font-syne font-bold text-sm" style="color:#D97706">Low coverage</p>
+          <p class="font-mono text-xs text-ink/60 mt-1">All regions have fewer than 5 entries. Confidence will improve as your Brain processes more invocations.</p>
+        </div>
+      {/if}
+    </div>
+    {/if}
