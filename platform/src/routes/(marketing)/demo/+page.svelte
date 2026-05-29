@@ -100,7 +100,6 @@
   let events: {type: string, data: unknown}[] = $state([]);
   let fastArtifact: unknown = $state(null);
   let fullArtifact: unknown = $state(null);
-  let partialResult: unknown = $state(null);
   let roleProgress: string[] = $state([]);
   let error = $state("");
   let showComparison = $state(false);
@@ -120,7 +119,6 @@
     events = [];
     fastArtifact = null;
     fullArtifact = null;
-    partialResult = null;
     roleProgress = [];
     error = "";
     showComparison = false;
@@ -159,7 +157,7 @@
           try { parsed = JSON.parse(evtData); } catch { parsed = evtData; }
           events = [...events, { type: evtType, data: parsed }];
           if (evtType === "fast.artifact") fastArtifact = parsed;
-          if (evtType === "chain.partial") { partialResult = parsed; running = false; }
+          if (evtType === "chain.partial") { running = false; }
           if (evtType === "full.artifact") { fullArtifact = (parsed as any)?.artifact ?? parsed; showComparison = true; }
           if (evtType.startsWith("full.") && !["full.artifact"].includes(evtType)) {
             const role = evtType.replace("full.", "");
@@ -249,7 +247,39 @@
             {running ? 'Running chain...' : 'Send to Brain →'}
           </button>
           {#if running}
-            <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.4);">Chain executing — fast artifact in ~3s</p>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+              <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink:0;overflow:visible;">
+                <style>
+                  @keyframes thal-r1{0%,100%{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+                  @keyframes thal-r2{0%,100%{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+                  @keyframes thal-core{0%,100%{opacity:0.4}50%{opacity:1}}
+                  .tr1{transform-origin:14px 14px;animation:thal-r1 3s linear infinite}
+                  .tr2{transform-origin:14px 14px;animation:thal-r2 5s linear infinite}
+                  .tc{animation:thal-core 1.2s ease-in-out infinite}
+                </style>
+                <g class="tr2">
+                  <circle cx="14" cy="3" r="1.5" fill="#0D0D0D" opacity="0.5"/>
+                  <circle cx="14" cy="25" r="1.5" fill="#0D0D0D" opacity="0.5"/>
+                  <circle cx="3" cy="14" r="1.5" fill="#0D0D0D" opacity="0.5"/>
+                  <circle cx="25" cy="14" r="1.5" fill="#0D0D0D" opacity="0.5"/>
+                  <circle cx="5.8" cy="5.8" r="1" fill="#0D0D0D" opacity="0.3"/>
+                  <circle cx="22.2" cy="5.8" r="1" fill="#0D0D0D" opacity="0.3"/>
+                  <circle cx="5.8" cy="22.2" r="1" fill="#0D0D0D" opacity="0.3"/>
+                  <circle cx="22.2" cy="22.2" r="1" fill="#0D0D0D" opacity="0.3"/>
+                </g>
+                <g class="tr1">
+                  <circle cx="14" cy="7" r="1.2" fill="#0D0D0D" opacity="0.4"/>
+                  <circle cx="14" cy="21" r="1.2" fill="#0D0D0D" opacity="0.4"/>
+                  <circle cx="7" cy="14" r="1.2" fill="#0D0D0D" opacity="0.4"/>
+                  <circle cx="21" cy="14" r="1.2" fill="#0D0D0D" opacity="0.4"/>
+                </g>
+                <circle class="tc" cx="14" cy="14" r="3" fill="#0D0D0D"/>
+              </svg>
+              <div>
+                <p style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(13,13,13,0.7);margin:0;">Chain executing</p>
+                <p style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.35);margin:2px 0 0;">Fast artifact arriving in ~3s</p>
+              </div>
+            </div>
           {/if}
           {#if error}
             <p style="font-family:'DM Mono',monospace;font-size:11px;color:#DC2626;">{error}</p>
@@ -274,16 +304,7 @@
         {/if}
 
         <!-- Fast artifact -->
-        {#if partialResult && !fullArtifact}
-            <div style="margin-bottom:24px;padding:20px;background:#FFF7ED;border:1px solid #D97706;border-radius:4px;">
-              <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#D97706;margin-bottom:8px;">CHAIN PAUSED — INTERROGATOR ACTIVE</p>
-              <p style="font-family:'DM Mono',monospace;font-size:12px;color:#0D0D0D;margin-bottom:12px;">The Brain needs clarification before proceeding. In production, these questions are returned to the caller to resolve:</p>
-              {#each ((partialResult as any)?.questions ?? []) as q}
-                <p style="font-family:'DM Mono',monospace;font-size:11px;color:#0D0D0D;padding:6px 10px;background:white;border:1px solid #E0DED8;border-radius:3px;margin-bottom:6px;">• {q}</p>
-              {/each}
-            </div>
-          {/if}
-          {#if fastArtifact && !fullArtifact}
+        {#if fastArtifact && !fullArtifact}
           <div style="margin-bottom:24px;padding:20px;background:#EEF1FF;border:1px solid #1A3AFF;border-radius:4px;">
             <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#1A3AFF;margin-bottom:8px;">FAST ARTIFACT — initial result</p>
             <div style="display:flex;gap:24px;">
