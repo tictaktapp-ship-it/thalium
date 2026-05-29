@@ -24,8 +24,11 @@
 </svelte:head>
 
 <!-- Nav -->
-<header class="fixed top-0 left-0 right-0 z-50 border-b" style="background:rgba(247,245,240,0.92);backdrop-filter:blur(12px);border-color:#E0DED8;">
-  <div style="max-width:1200px;margin:0 auto;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;">
+<header class="fixed top-0 left-0 right-0 z-50" style="background:rgba(247,245,240,0.92);backdrop-filter:blur(12px);">
+  <div style="border-bottom:1px solid #E0DED8;height:28px;display:flex;align-items:center;justify-content:center;">
+    <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.35);letter-spacing:0.06em;">Your data never trains our models.</span>
+  </div>
+  <div style="border-bottom:1px solid #E0DED8;max-width:1200px;margin:0 auto;padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;">
     <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
       <svg width="28" height="22" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
         <path d="M 10 40 C 10 18 40 6 50 6 C 60 6 90 18 90 40" fill="none" stroke="#0D0D0D" stroke-width="3" stroke-linecap="round"/>
@@ -43,14 +46,13 @@
     </nav>
 
     <div style="display:flex;align-items:center;gap:12px;">
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(13,13,13,0.28);letter-spacing:0.04em;padding-right:4px;">Your data never trains our models.</span>
       <a href="/login" style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(13,13,13,0.5);text-decoration:none;">Sign in</a>
       <a href="/signup" style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#F7F5F0;background:#0D0D0D;padding:8px 18px;border-radius:4px;text-decoration:none;transition:opacity 150ms;">Get started</a>
     </div>
   </div>
 </header>
 
-<main style="padding-top:60px;">
+<main style="padding-top:84px;">
   {@render children()}
 </main>
 
