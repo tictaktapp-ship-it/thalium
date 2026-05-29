@@ -64,7 +64,7 @@ export async function handleChainInvocation(
       brainId: request.brain_id,
       domain: request.domain,
       sessionId,
-      suppressInterrogator: (result?.data as any)?.suppress_interrogator ?? false,
+      suppressInterrogator: (request as any).suppress_interrogator ?? false,
     };
 
     try {
