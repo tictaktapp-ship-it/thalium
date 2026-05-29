@@ -103,7 +103,7 @@ invoke | memory:read | memory:write | full-access
                     <pre style="background-color: #E0DED8; padding: 16px; border-radius: 4px; font-family: 'DM Mono', monospace; color: #0D0D0D; overflow-x: auto; margin-bottom: 24px;">
 POST /v1/brain/{id}/invoke
 Authorization: Bearer thal_...
-{ "input": "...", "brain_id": "...", "domain": "..." }
+{"input":"...","brain_id":"...","domain":"..."}
 </pre>
                 </div>
                 <div style="display: flex; gap: 16px; margin-bottom: 24px;">

@@ -120,6 +120,7 @@
   </div>
 
   <!-- Right Panel - Ring Entries -->
+  <!-- Right Panel - Ring Entries -->
   <div class="flex-1 overflow-y-auto p-4">
     <div class="flex items-center gap-4 mb-4">
       <button
@@ -131,7 +132,6 @@
         onclick={() => activeTab = 'health'}
       >Memory health</button>
     </div>
-
     {#if activeTab === 'browser'}
     <div class="flex items-center gap-4 mb-4">
       <div class="flex items-center gap-1 bg-ink/5 rounded p-0.5">
@@ -237,7 +237,6 @@
       </div>
     </div>
   </div>
-</div>
     {:else}
     <div class="space-y-6 pt-2">
       <div>
@@ -285,6 +284,7 @@
           <p class="font-syne font-bold text-sm" style="color:#D97706">Low coverage</p>
           <p class="font-mono text-xs text-ink/60 mt-1">All regions have fewer than 5 entries. Confidence will improve as your Brain processes more invocations.</p>
         </div>
-      {/if}
-    </div>
     {/if}
+    {/if}
+  </div>
+</div>
