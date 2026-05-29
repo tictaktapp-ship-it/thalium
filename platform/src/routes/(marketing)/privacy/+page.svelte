@@ -1,5 +1,5 @@
-<svelte:head>
-  <title>Privacy Policy — Thalium</title>
+﻿<svelte:head>
+  <title>Privacy Policy â€” Thalium</title>
   <meta name="description" content="Thalium Privacy Policy. How we collect, use, and protect your data." />
 </svelte:head>
 
@@ -21,13 +21,13 @@
     <div style="max-width:680px;">
       {#each [
         { id:'overview', title:'Overview', body:'Thalium ("we", "us", "our") is committed to protecting your personal data. This Privacy Policy explains how we collect, use, store, and protect information when you use the Thalium platform and services. We are a data controller under UK GDPR and the Data Protection Act 2018.' },
-        { id:'data-we-collect', title:'Data we collect', body:'We collect: (a) Account data — name, email address, organisation name, and payment information when you register; (b) Usage data — API calls, invocation counts, Brain Instance activity, and audit log entries; (c) Content data — inputs you send to Brain Instances and the artifacts produced in response; (d) Technical data — IP addresses, browser type, and access logs for security and performance monitoring.' },
+        { id:'data-we-collect', title:'Data we collect', body:'We collect: (a) Account data â€” name, email address, organisation name, and payment information when you register; (b) Usage data â€” API calls, invocation counts, Brain Instance activity, and audit log entries; (c) Content data â€” inputs you send to Brain Instances and the artifacts produced in response; (d) Technical data â€” IP addresses, browser type, and access logs for security and performance monitoring.' },
         { id:'how-we-use-data', title:'How we use data', body:'We use your data to: provide and operate the Services; process payments and manage your subscription; send transactional emails (account confirmation, usage alerts, billing notifications); monitor and improve platform performance and security; comply with legal obligations. We do not use your Brain Instance data to train general-purpose AI models. We do not sell your data to third parties.' },
         { id:'data-sharing', title:'Data sharing', body:'We share data with: Supabase (database infrastructure, EU region); Fly.io (application hosting, EU region); Stripe (payment processing); Brevo (transactional email). All processors are bound by data processing agreements. We do not share data with advertisers or data brokers. We will disclose data if required by law or to protect the rights and safety of Thalium and its users.' },
         { id:'retention', title:'Data retention', body:'We retain account data for the duration of your subscription plus 30 days following termination. Brain Instance memory data (institutional ring entries) is deleted 30 days after account termination. Audit logs are retained for 7 years for compliance purposes. Billing records are retained as required by UK tax law.' },
         { id:'your-rights', title:'Your rights', body:'Under UK GDPR, you have the right to: access your personal data; correct inaccurate data; request deletion of your data; object to or restrict processing; data portability; withdraw consent where processing is based on consent. To exercise any of these rights, contact privacy@thalium.io. We will respond within 30 days. You also have the right to lodge a complaint with the Information Commissioner\'s Office (ICO).' },
-        { id:'cookies', title:'Cookies', body:'Thalium uses essential cookies for session management and authentication. We do not use advertising or tracking cookies. We use Plausible Analytics for privacy-preserving usage analytics — no cookies are set and no personal data is collected. You can disable cookies in your browser settings, but this will prevent you from using the authenticated platform.' },
-        { id:'contact', title:'Contact', body:'For privacy enquiries, contact privacy@thalium.io. Our data protection contact is available at the same address. Thalium is operated by Tictakt Ltd, registered in England and Wales.' },
+        { id:'cookies', title:'Cookies', body:'Thalium uses essential cookies for session management and authentication. We do not use advertising or tracking cookies. We use Plausible Analytics for privacy-preserving usage analytics â€” no cookies are set and no personal data is collected. You can disable cookies in your browser settings, but this will prevent you from using the authenticated platform.' },
+        { id:'contact', title:'Contact', body:'For privacy enquiries, contact privacy@thalium.io. Our data protection contact is available at the same address. Thalium is operated by Curavest Ltd, registered in England and Wales.' },
       ] as section}
         <div id={section.id} style="margin-bottom:48px;">
           <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#0D0D0D;margin-bottom:12px;">{section.title}</h2>

@@ -1,5 +1,5 @@
-<svelte:head>
-  <title>Terms of Service — Thalium</title>
+﻿<svelte:head>
+  <title>Terms of Service â€” Thalium</title>
   <meta name="description" content="Thalium Terms of Service. Read our terms governing use of the Thalium Brain-as-a-Service platform." />
 </svelte:head>
 
@@ -30,7 +30,7 @@
         { id:'liability', title:'8. Limitation of liability', body:'To the maximum extent permitted by law, Thalium\'s aggregate liability for any claim arising from or related to these Terms or the Services shall not exceed the amount you paid to Thalium in the 12 months preceding the claim. Thalium is not liable for indirect, incidental, consequential, or punitive damages. The Services are provided "as is" without warranty of any kind.' },
         { id:'termination', title:'9. Termination', body:'Either party may terminate these Terms at any time. You may cancel your subscription from your billing dashboard. Thalium may suspend or terminate your account for violation of these Terms. On termination, your access to the Services will cease. Thalium will retain your data for 30 days following termination, after which it may be permanently deleted.' },
         { id:'governing-law', title:'10. Governing law', body:'These Terms are governed by the laws of England and Wales. Any disputes arising from these Terms shall be subject to the exclusive jurisdiction of the courts of England and Wales.' },
-        { id:'contact', title:'11. Contact', body:'Questions about these Terms should be directed to legal@thalium.io. Thalium is operated by Tictakt Ltd, registered in England and Wales.' },
+        { id:'contact', title:'11. Contact', body:'Questions about these Terms should be directed to legal@thalium.io. Thalium is operated by Curavest Ltd, registered in England and Wales.' },
       ] as section}
         <div id={section.id} style="margin-bottom:48px;">
           <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#0D0D0D;margin-bottom:12px;">{section.title}</h2>
