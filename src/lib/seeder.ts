@@ -59,7 +59,7 @@ export async function seedBrainInstance(brainId: string, domain: string): Promis
           },
           source: 'seeding',
           entry_level: 'branch',
-          confidence: 50
+          confidence: 0.50
         });
         result.written++;
       } catch (error) {

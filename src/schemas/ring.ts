@@ -85,7 +85,7 @@ export const InstitutionalRingEntrySchema = z.object({
   content: z.unknown(),
   source: z.enum(['chain', 'direct_write', 'seeding', 'calibrator']),
   entry_level: z.enum(['root', 'branch', 'leaf']),
-  confidence: z.number().min(0).max(100),
+  confidence: z.number().min(0).max(1),
   superseded_by: z.string().uuid().nullable(),
   created_at: z.string().datetime(),
 }).superRefine((data, ctx) => {
@@ -107,7 +107,7 @@ export const CoverageMapEntrySchema = z.object({
   brain_id: z.string().uuid(),
   address_key: AddressKeySchema,
   entry_count: z.number().int().positive(),
-  avg_confidence: z.number().min(0).max(100),
+  avg_confidence: z.number().min(0).max(1),
   last_written_at: z.string().datetime(),
 });
 

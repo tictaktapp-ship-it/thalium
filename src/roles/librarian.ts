@@ -29,7 +29,7 @@ export async function runLibrarian(
           content: contribution.payload,
           source: 'chain',
           entry_level: 'leaf',
-          confidence: 75,
+          confidence: 0.75,
           superseded_by: null,
           created_at: new Date().toISOString()
         });
