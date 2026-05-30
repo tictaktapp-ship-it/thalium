@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { onMount } from "svelte";
 
   const domains = [
@@ -246,6 +246,13 @@
             style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#F7F5F0;background:{running ? '#888' : '#0D0D0D'};padding:12px 28px;border:none;border-radius:4px;cursor:{running ? 'not-allowed' : 'pointer'};transition:opacity 150ms;">
             {running ? 'Running chain...' : 'Send to Brain →'}
           </button>
+          {#if fullArtifact || fastArtifact || error || roleProgress.length > 0}
+            <button
+              onclick={resetState}
+              style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:rgba(13,13,13,0.6);background:white;padding:12px 20px;border:1px solid #E0DED8;border-radius:4px;cursor:pointer;transition:all 150ms;">
+              ↺ New test
+            </button>
+          {/if}
           {#if running}
             <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
               <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink:0;overflow:visible;">
@@ -390,6 +397,49 @@
             <p style="font-family:'Syne',sans-serif;font-size:13px;color:rgba(13,13,13,0.65);line-height:1.7;">
               This Brain has processed <strong style="color:#0D0D0D;">every invocation you have sent in this session</strong>. Each one updates the institutional ring. The next invocation will be informed by this one. A standard LLM call forgets everything the moment it ends.
             </p>
+          </div>
+
+          <!-- Stress test output record -->
+          <div style="margin-top:24px;padding:20px;background:white;border:1px solid #E0DED8;border-radius:4px;">
+            <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(13,13,13,0.3);margin-bottom:14px;">Stress test output record — paste into results document</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(13,13,13,0.35);margin-bottom:4px;">INTENT TYPE CLASSIFIED</p>
+                <p style="font-family:'DM Mono',monospace;font-size:12px;color:#0D0D0D;background:#F7F5F0;padding:8px;border-radius:2px;">{(fullArtifact as any)?.address_key?.split('.')?.[0] ?? '—'}</p>
+              </div>
+              <div>
+                <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(13,13,13,0.35);margin-bottom:4px;">ADDRESS KEY</p>
+                <p style="font-family:'DM Mono',monospace;font-size:12px;color:#1A3AFF;background:#F7F5F0;padding:8px;border-radius:2px;word-break:break-all;">{(fullArtifact as any)?.address_key ?? '—'}</p>
+              </div>
+              <div>
+                <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(13,13,13,0.35);margin-bottom:4px;">CONFIDENCE SCORE / GATE</p>
+                <p style="font-family:'DM Mono',monospace;font-size:12px;color:#0D0D0D;background:#F7F5F0;padding:8px;border-radius:2px;">{(fullArtifact as any)?.confidence_score ?? '—'}/100 — {(fullArtifact as any)?.gate_decision ?? '—'}</p>
+              </div>
+              <div>
+                <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(13,13,13,0.35);margin-bottom:4px;">FLAGS PRESENT</p>
+                <p style="font-family:'DM Mono',monospace;font-size:12px;color:#0D0D0D;background:#F7F5F0;padding:8px;border-radius:2px;">
+                  {[
+                    (fullArtifact as any)?.low_coverage ? 'low_coverage' : null,
+                    (fullArtifact as any)?.chunked ? 'chunked' : null,
+                    (fullArtifact as any)?.domain_uncertainty ? 'domain_uncertainty' : null,
+                    (fullArtifact as any)?.status === 'partial' ? 'partial' : null,
+                    (fullArtifact as any)?.operating_mode === 'bootstrap' ? 'bootstrap' : null,
+                  ].filter(Boolean).join(' · ') || 'none'}
+                </p>
+              </div>
+            </div>
+            <div>
+              <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(13,13,13,0.35);margin-bottom:4px;">ROLES COMPLETED</p>
+              <p style="font-family:'DM Mono',monospace;font-size:12px;color:#0D0D0D;background:#F7F5F0;padding:8px;border-radius:2px;">
+                {((fullArtifact as any)?.anchor_trace ?? []).filter((r: any) => r.status === 'complete').map((r: any) => r.role).join(' → ') || '—'}
+              </p>
+            </div>
+            <div style="margin-top:12px;">
+              <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(13,13,13,0.35);margin-bottom:4px;">KEY OBSERVATION (fill in manually)</p>
+              <div style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(13,13,13,0.25);background:#F7F5F0;padding:8px;border-radius:2px;min-height:40px;border:1px dashed #E0DED8;">
+                &nbsp;
+              </div>
+            </div>
           </div>
         {/if}
 
