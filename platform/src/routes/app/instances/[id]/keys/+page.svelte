@@ -40,6 +40,56 @@
     </button>
   </div>
 
+  <!-- API endpoint reference -->
+  <div class="bg-white border border-rule p-6">
+    <p class="font-syne font-bold text-xs tracking-widest uppercase text-ink/40 mb-4">API endpoint reference</p>
+    <div class="space-y-4">
+      <div>
+        <p class="font-syne font-bold text-xs uppercase text-ink/40 mb-1">Base URL</p>
+        <div class="flex items-center gap-3">
+          <code class="font-mono text-sm text-ink bg-paper px-3 py-2 rounded border border-rule flex-1 select-all">
+            https://thalium-chain-executor.fly.dev
+          </code>
+          <button
+            onclick={() => navigator.clipboard.writeText('https://thalium-chain-executor.fly.dev')}
+            class="font-syne font-bold text-xs tracking-wide uppercase px-3 py-2 border border-rule rounded hover:bg-white transition-colors text-ink/50 hover:text-ink whitespace-nowrap"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+      <div>
+        <p class="font-syne font-bold text-xs uppercase text-ink/40 mb-1">Invoke endpoint — your Brain ID pre-filled</p>
+        <div class="flex items-center gap-3">
+          <code class="font-mono text-sm text-ink bg-paper px-3 py-2 rounded border border-rule flex-1 select-all break-all">
+            POST https://thalium-chain-executor.fly.dev/v1/brain/{data.instance.id}/invoke
+          </code>
+          <button
+            onclick={() => navigator.clipboard.writeText(`POST https://thalium-chain-executor.fly.dev/v1/brain/${data.instance.id}/invoke`)}
+            class="font-syne font-bold text-xs tracking-wide uppercase px-3 py-2 border border-rule rounded hover:bg-white transition-colors text-ink/50 hover:text-ink whitespace-nowrap"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+      <div style="background:#F7F5F0" class="p-4 rounded border border-rule">
+        <p class="font-syne font-bold text-xs uppercase text-ink/40 mb-2">Request format</p>
+        <pre class="font-mono text-xs text-ink/70 leading-relaxed whitespace-pre-wrap">{`Authorization: Bearer <your-api-key>
+Content-Type: application/json
+
+{
+  "session_id": "<uuid>",
+  "brain_id": "${data.instance.id}",
+  "domain": "software",
+  "input": "Your prompt here"
+}`}</pre>
+      </div>
+      <p class="font-syne text-xs text-ink/30 leading-relaxed">
+        The response is a Server-Sent Events stream. <code class="font-mono">fast.artifact</code> arrives within ~3 seconds. <code class="font-mono">full.artifact</code> is the terminal event containing the complete structured output.
+      </p>
+    </div>
+  </div>
+
   <!-- Newly created key — show once -->
   {#if form?.success && form?.rawKey}
     <div style="background:#EEF1FF;border-left:3px solid #1A3AFF" class="p-4">
