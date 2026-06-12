@@ -62,10 +62,10 @@
         <p class="font-syne font-bold text-xs uppercase text-ink/40 mb-1">Invoke endpoint — your Brain ID pre-filled</p>
         <div class="flex items-center gap-3">
           <code class="font-mono text-sm text-ink bg-paper px-3 py-2 rounded border border-rule flex-1 select-all break-all">
-            POST https://thalium.io/api/v1/v1/brain/{data.instance.id}/invoke
+            POST https://thalium.io/api/v1/brain/{data.instance.id}/invoke
           </code>
           <button
-            onclick={() => navigator.clipboard.writeText(`POST https://thalium.io/api/v1/v1/brain/${data.instance.id}/invoke`)}
+            onclick={() => navigator.clipboard.writeText(`POST https://thalium.io/api/v1/brain/${data.instance.id}/invoke`)}
             class="font-syne font-bold text-xs tracking-wide uppercase px-3 py-2 border border-rule rounded hover:bg-white transition-colors text-ink/50 hover:text-ink whitespace-nowrap"
           >
             Copy
